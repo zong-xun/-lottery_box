@@ -855,7 +855,7 @@ body {
 /* 獎項彈窗 */
 .prize-card {
     position: relative;
-    width: 400px;
+    /* width: 400px; */
     min-height: 480px;
     background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
     border-radius: 25px;
