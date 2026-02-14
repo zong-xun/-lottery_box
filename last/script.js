@@ -144,7 +144,23 @@ const AudioSystem = {
         osc.stop(this.context.currentTime + 0.28);
       }, i * 90);
     });
-  }
+  },
+      playReset() {
+        if (!this.context) this.init();
+        const osc = this.context.createOscillator();
+        const gain = this.context.createGain();
+
+        osc.connect(gain);
+        gain.connect(this.context.destination);
+
+        osc.frequency.setValueAtTime(800, this.context.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, this.context.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.2, this.context.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.2);
+
+        osc.start(this.context.currentTime);
+        osc.stop(this.context.currentTime + 0.2);
+    }
 };
 
 class LotteryBox {
@@ -159,7 +175,7 @@ class LotteryBox {
 
         this.musicNormalVolume = 0.8;   // 平常音量
         this.musicDrawVolume = 0.25;    // 抽獎時音量
-this.musicFadeMs = 450;         // 淡入淡出時間(ms)
+        this.musicFadeMs = 450;         // 淡入淡出時間(ms)
 
         this.currentDrawnNumber = null;
         this.isViewingHistoryPrize = false;
@@ -240,6 +256,7 @@ this.musicFadeMs = 450;         // 淡入淡出時間(ms)
             this.musicControl.classList.add('muted');
             document.addEventListener('click', () => {
                 if (!this.isMusicPlaying) {
+                    this.bgMusic.volume = this.musicNormalVolume; // ✅ 新增
                     this.bgMusic.play().then(() => {
                         this.isMusicPlaying = true;
                         this.musicControl.classList.remove('muted');
@@ -334,7 +351,7 @@ this.musicFadeMs = 450;         // 淡入淡出時間(ms)
         const p = Math.min(1, (t - startTime) / durationMs);
         // easeOut
         const eased = 1 - Math.pow(1 - p, 3);
-        this.bgMusic.volume = start + (end - start) * eased;
+        this.bgMusic.volume = Math.max(0, Math.min(1, start + (end - start) * eased));
 
         if (p < 1) requestAnimationFrame(step);
     };
@@ -728,6 +745,7 @@ const introPages = [
     modal.classList.remove('intro-closed');
     modal.classList.add('intro-open');
     autoPlayMusic1();
+    // window.lottery.autoPlayMusic(); 
     render();
   });
 

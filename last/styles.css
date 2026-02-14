@@ -1057,7 +1057,7 @@ body {
 /* 獎項彈窗響應式 */
 @media (max-width: 768px) {
     .prize-card {
-        width: 320px;
+        /* width: 320px; */
         min-height: 450px;
         padding: 25px;
     }
