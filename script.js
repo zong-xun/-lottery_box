@@ -269,7 +269,7 @@ class LotteryBox {
         // 延遲1秒後顯示吉祥話紅包
         setTimeout(() => {
             this.showBlessing();
-        }, 1000);
+        }, 300);
     }
 
     // 創建粒子特效
