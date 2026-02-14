@@ -303,6 +303,14 @@ class LotteryBox {
             const numElement = document.createElement('div');
             numElement.className = 'drawn-number';
             numElement.textContent = num;
+            numElement.style.cursor = 'pointer';
+            numElement.title = '點擊查看獎項';
+            
+            // 添加點擊事件
+            numElement.addEventListener('click', () => {
+                this.showPrizeByNumber(num);
+            });
+            
             drawnContainer.appendChild(numElement);
         });
     }
@@ -346,6 +354,18 @@ class LotteryBox {
         
         prizeNumber.textContent = this.currentDrawnNumber;
         prizeAward.textContent = this.prizes[this.currentDrawnNumber];
+        
+        modal.classList.add('show');
+    }
+    
+    // 根據號碼顯示獎項（用於點擊已抽出號碼）
+    showPrizeByNumber(number) {
+        const modal = document.getElementById('prizeModal');
+        const prizeNumber = document.getElementById('prizeNumber');
+        const prizeAward = document.getElementById('prizeAward');
+        
+        prizeNumber.textContent = number;
+        prizeAward.textContent = this.prizes[number];
         
         modal.classList.add('show');
     }
