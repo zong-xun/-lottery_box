@@ -342,7 +342,7 @@ class LotteryBox {
         if (this.currentDrawnNumber !== null) {
             setTimeout(() => {
                 this.showPrize();
-            }, 300);
+            }, 200);
         }
     }
 
