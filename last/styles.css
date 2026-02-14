@@ -1,0 +1,1732 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft JhengHei', '微軟正黑體', sans-serif;
+    background: linear-gradient(135deg, #8B0000 0%, #DC143C 50%, #FF6347 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.hourse_logo {
+    width: 100px;
+    height: 60px;
+    vertical-align: middle;
+}
+
+/* 裝飾性背景元素 */
+.decoration {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.lantern {
+    width: 60px;
+    height: 80px;
+    background: linear-gradient(to bottom, #FF0000, #CC0000);
+    border-radius: 10px;
+    position: absolute;
+    animation: swing 3s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.lantern::before {
+    content: '福';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: gold;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.lantern::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 15px;
+    background: gold;
+    border-radius: 0 0 10px 10px;
+}
+
+@keyframes swing {
+
+    0%,
+    100% {
+        transform: rotate(-5deg);
+    }
+
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+.lantern-left {
+    top: 50px;
+    left: 5%;
+    animation-delay: 0s;
+}
+
+.lantern-right {
+    top: 50px;
+    right: 5%;
+    animation-delay: 1.5s;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s;
+}
+
+.lantern-right:active {
+    transform: scale(0.9) rotate(-5deg);
+}
+
+.lantern-right.muted {
+    opacity: 0.5;
+    filter: grayscale(50%);
+}
+
+/* 金幣動畫 */
+.coin {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, #FFD700, #FFA500);
+    border-radius: 50%;
+    border: 3px solid #FF6347;
+    animation: fall 4s linear infinite;
+    opacity: 0.8;
+    top: -50px;
+}
+
+.coin::before {
+    content: '錢';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #8B0000;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    90% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateY(calc(100vh + 100px)) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 主容器 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+/* 標題 */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    animation: bounceIn 1s ease-out;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.title {
+    font-size: 56px;
+    color: #FFD700;
+    text-shadow:
+        3px 3px 0px #FF0000,
+        6px 6px 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.subtitle {
+    font-size: 24px;
+    color: #FFF;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 主要內容區 - 左右排列 */
+.main-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* 抽獎區 */
+.draw-area {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    border-radius: 30px;
+    padding: 50px;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 0 30px rgba(255, 255, 255, 0.3);
+    border: 5px solid #FF0000;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 家庭照片背景 */
+.draw-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('family.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    z-index: 0;
+}
+
+/* 馬年裝飾 */
+.draw-area::after {
+    content: '🐴';
+    position: absolute;
+    font-size: 150px;
+    opacity: 0.08;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.result-display {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+.result-number {
+    font-size: 120px;
+    font-weight: bold;
+    color: #8B0000;
+    text-shadow:
+        3px 3px 0px #FFD700,
+        6px 6px 15px rgba(0, 0, 0, 0.3);
+    animation: pop 0.5s ease-out;
+    margin: 20px 0;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+.result-number.rolling {
+    animation: roll 0.1s linear infinite;
+}
+
+@keyframes roll {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-10px);
+    }
+}
+
+.draw-button {
+    background: linear-gradient(135deg, #FF0000, #8B0000);
+    color: #FFD700;
+    font-size: 32px;
+    font-weight: bold;
+    padding: 25px 60px;
+    border: 5px solid #FFD700;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow:
+        0 8px 0 #660000,
+        0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s;
+    position: relative;
+    z-index: 2;
+}
+
+.draw-button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow:
+        0 10px 0 #660000,
+        0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.draw-button:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow:
+        0 4px 0 #660000,
+        0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.draw-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 右側區域 */
+.side-area {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* 資訊區 */
+.info-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.info-box {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    border: 3px solid #FFD700;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.info-label {
+    font-size: 20px;
+    color: #8B0000;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.info-value {
+    font-size: 48px;
+    color: #FF0000;
+    font-weight: bold;
+}
+
+/* 已抽出號碼 */
+.drawn-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 20px;
+    border: 3px solid #FFD700;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    /* overflow: visible; */
+    flex: 1;
+    min-height: 200px;
+    max-height: 200px;
+    overflow: scroll;
+}
+
+.drawn-title {
+    font-size: 20px;
+    color: #8B0000;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.drawn-numbers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+    overflow: visible;
+}
+
+.drawn-number {
+    background: linear-gradient(135deg, #FF6347, #FF0000);
+    color: #FFD700;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px 8px;
+    border-radius: 12px;
+    border: 3px solid #FFD700;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.5s ease-out;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    transition: all 0.2s ease;
+}
+
+.drawn-number:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #FF8C00, #FF4500);
+    border-color: #FFD700;
+}
+
+@keyframes slideIn {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* 重新開始按鈕 */
+.reset-button {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B0000;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 40px;
+    border: 3px solid #FF0000;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    display: block;
+    margin: 0 auto;
+    transition: all 0.3s;
+}
+
+.reset-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.reset-button:active {
+    transform: scale(0.98);
+}
+
+/* 粒子效果 */
+.particle {
+    position: fixed;
+    pointer-events: none;
+    font-size: 30px;
+    animation: particle-fly 2s ease-out forwards;
+    z-index: 1000;
+}
+
+@keyframes particle-fly {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-300px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 響應式設計 */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .side-area {
+        max-height: none;
+    }
+
+    .info-section {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 36px;
+    }
+
+    .subtitle {
+        font-size: 18px;
+    }
+
+    .draw-area {
+        padding: 30px 20px;
+        min-height: 300px;
+    }
+
+    .result-number {
+        font-size: 80px;
+    }
+
+    .draw-button {
+        font-size: 24px;
+        padding: 20px 40px;
+    }
+
+    .info-section {
+        grid-template-columns: 1fr;
+    }
+
+    .drawn-numbers {
+        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    }
+
+    .drawn-number {
+        font-size: 18px;
+        min-height: 45px;
+    }
+
+    .lantern {
+        width: 40px;
+        height: 60px;
+    }
+
+    .lantern::before {
+        font-size: 18px;
+    }
+}
+
+/* 紅包彈窗 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+/* 紅包設計 */
+.red-envelope {
+    position: relative;
+    width: 340px;
+    height: 500px;
+    background: linear-gradient(135deg, #FF0000 0%, #DC143C 50%, #8B0000 100%);
+    border-radius: 20px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 0 30px rgba(255, 215, 0, 0.2);
+    animation: envelopeEnter 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+    overflow: hidden;
+    border: 3px solid #FFD700;
+}
+
+@keyframes envelopeEnter {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* 紅包上半部 */
+.envelope-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(135deg, #DC143C, #8B0000);
+    border-radius: 20px 20px 0 0;
+    z-index: 1;
+}
+
+/* 紅包主體 */
+.envelope-body {
+    position: absolute;
+    top: 32%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    height: 42%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px 20px;
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 215, 0, 0.1);
+    z-index: 3;
+    border: 2px solid #FFD700;
+}
+
+/* 吉祥話文字 */
+.blessing-text {
+    font-size: 30px;
+    font-weight: bold;
+    color: #8B0000;
+    text-align: center;
+    line-height: 1.6;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    animation: textGlow 2s ease-in-out infinite;
+    width: 100%;
+}
+
+@keyframes textGlow {
+
+    0%,
+    100% {
+        text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    }
+
+    50% {
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.8),
+            0 0 20px rgba(255, 215, 0, 0.5);
+    }
+}
+
+/* 紅包封口 */
+.envelope-flap {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 160px solid transparent;
+    border-right: 160px solid transparent;
+    border-top: 80px solid #B22222;
+    z-index: 2;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+}
+
+/* 紅包福字印章 - 春聯樣式 */
+.envelope-seal {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    height: 55px;
+    background: linear-gradient(135deg, #DC143C 0%, #8B0000 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: bold;
+    color: #FFD700;
+    border: 3px solid #FFD700;
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.4),
+        inset 0 2px 10px rgba(255, 215, 0, 0.3),
+        inset 0 0 20px rgba(255, 100, 100, 0.2);
+    z-index: 4;
+    animation: sealPulse 1.5s ease-in-out infinite;
+    letter-spacing: 10px;
+    padding: 0 15px;
+    text-shadow:
+        1px 1px 2px rgba(0, 0, 0, 0.5),
+        0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* 春聯裝飾線條 */
+.envelope-seal::before,
+.envelope-seal::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 25px;
+    background: linear-gradient(to bottom, transparent, #FFD700, transparent);
+}
+
+.envelope-seal::before {
+    left: 8px;
+}
+
+.envelope-seal::after {
+    right: 8px;
+}
+
+@keyframes sealPulse {
+
+    0%,
+    100% {
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.03);
+        box-shadow:
+            0 8px 25px rgba(0, 0, 0, 0.6),
+            inset 0 2px 15px rgba(255, 215, 0, 0.5),
+            inset 0 0 25px rgba(255, 100, 100, 0.3),
+            0 0 25px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* 確定按鈕 */
+.confirm-button {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B0000;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 15px 50px;
+    border: 3px solid #FF6347;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow:
+        0 5px 0 #CC8800,
+        0 8px 20px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s;
+    z-index: 5;
+}
+
+.confirm-button:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow:
+        0 7px 0 #CC8800,
+        0 12px 25px rgba(0, 0, 0, 0.5);
+}
+
+.confirm-button:active {
+    transform: translateX(-50%) translateY(2px);
+    box-shadow:
+        0 3px 0 #CC8800,
+        0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* 紅包裝飾花紋 */
+.envelope-top::before,
+.envelope-top::after {
+    content: '🐴';
+    position: absolute;
+    font-size: 40px;
+    opacity: 0.3;
+}
+
+.envelope-top::before {
+    top: 20px;
+    left: 30px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.envelope-top::after {
+    top: 20px;
+    right: 30px;
+    animation: float 3s ease-in-out infinite 1.5s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* 響應式設計 - 紅包 */
+@media (max-width: 768px) {
+    .red-envelope {
+        width: 300px;
+        height: 450px;
+    }
+
+    .blessing-text {
+        font-size: 26px;
+        line-height: 1.5;
+        letter-spacing: 1px;
+    }
+
+    .envelope-seal {
+        width: 140px;
+        height: 50px;
+        font-size: 22px;
+        letter-spacing: 8px;
+        padding: 0 12px;
+    }
+
+    .confirm-button {
+        font-size: 20px;
+        padding: 12px 40px;
+        bottom: 35px;
+    }
+}
+
+/* 獎項彈窗 */
+.prize-card {
+    position: relative;
+    width: 400px;
+    min-height: 480px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+    border-radius: 25px;
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.6),
+        inset 0 0 40px rgba(255, 255, 255, 0.3);
+    animation: prizeEnter 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+    overflow: hidden;
+    border: 5px solid #FF0000;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes prizeEnter {
+    0% {
+        transform: scale(0) rotateY(180deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1) rotateY(0deg);
+    }
+
+    100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+.prize-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.prize-sparkle {
+    font-size: 36px;
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 0.8;
+    }
+}
+
+.prize-title {
+    font-size: 42px;
+    font-weight: bold;
+    color: #8B0000;
+    text-shadow:
+        2px 2px 0 #FFD700,
+        4px 4px 10px rgba(0, 0, 0, 0.3);
+    animation: titleBounce 2s ease-in-out infinite;
+}
+
+@keyframes titleBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.prize-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 215, 0, 0.2);
+    border: 3px solid #FF6347;
+    margin-bottom: 20px;
+}
+
+.prize-number-label,
+.prize-award-label {
+    font-size: 18px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.prize-number {
+    font-size: 72px;
+    font-weight: bold;
+    color: #FF0000;
+    text-align: center;
+    text-shadow:
+        3px 3px 0 #FFD700,
+        6px 6px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    animation: numberPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes numberPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.prize-divider {
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(to right, transparent, #FFD700, transparent);
+    margin: 20px auto;
+}
+
+.prize-award {
+    font-size: 36px;
+    font-weight: bold;
+    color: #8B0000;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    animation: awardGlow 2s ease-in-out infinite;
+}
+
+@keyframes awardGlow {
+
+    0%,
+    100% {
+        text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    }
+
+    50% {
+        text-shadow:
+            0 0 15px rgba(255, 215, 0, 0.8),
+            0 0 25px rgba(255, 215, 0, 0.5);
+    }
+}
+
+.prize-footer {
+    margin-bottom: 20px;
+}
+
+.prize-blessing {
+    font-size: 24px;
+    color: #8B0000;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.prize-confirm-button {
+    background: linear-gradient(135deg, #FF0000, #8B0000);
+    color: #FFD700;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 15px 60px;
+    border: 4px solid #FFD700;
+    border-radius: 35px;
+    cursor: pointer;
+    box-shadow:
+        0 6px 0 #660000,
+        0 10px 25px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s;
+    position: relative;
+}
+
+.prize-confirm-button:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 8px 0 #660000,
+        0 15px 30px rgba(0, 0, 0, 0.6);
+}
+
+.prize-confirm-button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 4px 0 #660000,
+        0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* 獎項彈窗響應式 */
+@media (max-width: 768px) {
+    .prize-card {
+        width: 320px;
+        min-height: 450px;
+        padding: 25px;
+    }
+
+    .prize-title {
+        font-size: 36px;
+    }
+
+    .prize-sparkle {
+        font-size: 30px;
+    }
+
+    .prize-number {
+        font-size: 60px;
+    }
+
+    .prize-award {
+        font-size: 30px;
+    }
+
+    .prize-blessing {
+        font-size: 20px;
+    }
+
+    .prize-confirm-button {
+        font-size: 20px;
+        padding: 12px 50px;
+    }
+}
+
+/* =========================
+   ✅ 開場捲軸導覽
+========================= */
+
+/* =========================
+   ✅ 開場捲軸：卷起來 + 打開
+========================= */
+
+.scroll-wrap {
+    position: relative;
+    width: min(860px, 92vw);
+    height: min(620px, 78vh);
+    border-radius: 22px;
+    overflow: hidden;
+    z-index: 10000;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+    border: 5px solid #9b0000;
+    background: radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.35), transparent 60%),
+        linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+}
+
+/* 左右捲軸面板：加一點紙纖維/絲綢質感 */
+.scroll-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.22), transparent 55%),
+        radial-gradient(circle at 70% 70%, rgba(255, 215, 0, 0.18), transparent 55%),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06) 2px, rgba(0, 0, 0, 0.04) 3px, rgba(0, 0, 0, 0.04) 4px),
+        linear-gradient(135deg, #B22222 0%, #7a0000 100%);
+    box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.25);
+    border-top: 3px solid rgba(255, 215, 0, 0.55);
+    border-bottom: 3px solid rgba(255, 215, 0, 0.55);
+}
+
+.scroll-panel.left {
+    left: 0;
+    border-right: 3px solid rgba(255, 215, 0, 0.45);
+    transform: translateX(0);
+}
+
+.scroll-panel.right {
+    right: 0;
+    border-left: 3px solid rgba(255, 215, 0, 0.45);
+    transform: translateX(0);
+}
+
+/* 卷頭：更像捲軸的「木棒卷頭」 */
+.scroll-panel::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 30%, #ffeaa7, #fbc531 55%, #e1b12c 100%);
+    border: 4px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.35);
+}
+
+.scroll-panel.left::before {
+    left: 14px;
+}
+
+.scroll-panel.right::before {
+    right: 14px;
+}
+
+/* ✅ 卷起來中間區塊（開始按鈕） */
+.scroll-closed-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    z-index: 3;
+}
+
+.scroll-closed-title {
+    font-size: 40px;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #7a0000, 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.scroll-closed-sub {
+    font-size: 16px;
+    font-weight: 800;
+    color: rgba(255, 215, 0, 0.9);
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* ✅ 開始按鈕：像貼在捲軸上的大印章 */
+.scroll-start-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 300px;
+    border: none;
+    cursor: pointer;
+    padding: 16px 34px;
+    border-radius: 999px;
+    font-size: 60px;
+    font-weight: 950;
+    color: #ffd700;
+    background: radial-gradient(circle at 30% 30%, #ff3b3b, #b30000 70%);
+    border: 3px solid rgba(255, 215, 0, 0.9);
+    box-shadow: 0 10px 0 rgba(70, 0, 0, 0.55), 0 20px 40px rgba(0, 0, 0, 0.35);
+    transform: translateY(0);
+    transition: transform .15s ease;
+}
+
+.scroll-start-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 6px 0 rgba(70, 0, 0, 0.55), 0 14px 26px rgba(0, 0, 0, 0.35);
+}
+
+/* 內容區（打開後才淡入） */
+.scroll-content {
+    position: absolute;
+    inset: 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 3px solid #FF6347;
+    box-shadow: inset 0 0 18px rgba(255, 215, 0, 0.25);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    opacity: 0;
+    transform: translateY(10px);
+    z-index: 2;
+}
+
+/* ✅ 初始：intro-closed 狀態時，內容隱藏 */
+#introModal.intro-closed .scroll-content {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ✅ 按開始後：intro-open 狀態 → 面板滑開、內容淡入 */
+#introModal.intro-open .scroll-panel.left {
+    animation: scrollOpenLeft 0.9s ease-in-out forwards;
+}
+
+#introModal.intro-open .scroll-panel.right {
+    animation: scrollOpenRight 0.9s ease-in-out forwards;
+}
+
+@keyframes scrollOpenLeft {
+    to {
+        transform: translateX(-110%);
+    }
+}
+
+@keyframes scrollOpenRight {
+    to {
+        transform: translateX(110%);
+    }
+}
+
+#introModal.intro-open .scroll-content {
+    animation: contentFadeIn 0.55s ease-out forwards;
+    animation-delay: 0.7s;
+}
+
+@keyframes contentFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ✅ 打開後：把卷起來的中央開始區塊淡出 */
+#introModal.intro-open .scroll-closed-center {
+    animation: centerFadeOut 0.25s ease-out forwards;
+    animation-delay: 0.05s;
+}
+
+@keyframes centerFadeOut {
+    to {
+        opacity: 0;
+        transform: scale(0.98);
+        pointer-events: none;
+    }
+}
+
+/* 內容內文字 */
+.scroll-title {
+    font-size: 40px;
+    font-weight: 900;
+    color: #8B0000;
+    text-align: center;
+    text-shadow: 2px 2px 0 #FFD700, 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-sub {
+    font-size: 20px;
+    font-weight: 700;
+    color: #8B0000;
+    text-align: center;
+}
+
+.scroll-sub .gold {
+    color: #FF0000;
+    font-size: 26px;
+    text-shadow: 1px 1px 0 #FFD700;
+}
+
+.scroll-body {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 215, 0, 0.12);
+    border: 2px dashed rgba(255, 99, 71, 0.6);
+    /* overflow:auto; */
+}
+
+.scroll-list {
+    margin: 8px 0 0 18px;
+    color: #8B0000;
+    font-size: 18px;
+    line-height: 1.7;
+    font-weight: 650;
+}
+
+.scroll-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* =========================
+   ✅ 導覽按鈕區：置中＋更漂亮
+========================= */
+
+/* 讓底部按鈕群置中 */
+.scroll-footer {
+    justify-content: center !important;
+    gap: 18px !important;
+    flex-wrap: wrap;
+}
+
+/* 點點與按鈕置中排列 */
+.scroll-dots {
+    justify-content: center;
+    width: 100%;
+    order: 1;
+    margin-top: 6px;
+}
+
+.scroll-actions {
+    order: 0;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+}
+
+/* 統一按鈕尺寸與質感 */
+.scroll-btn {
+    cursor: pointer;
+    min-width: 120px;
+    height: 46px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(255, 215, 0, 0.9);
+    box-shadow:
+        0 10px 0 rgba(70, 0, 0, 0.55),
+        0 18px 30px rgba(0, 0, 0, 0.25);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+
+.scroll-btn:hover {
+    filter: brightness(1.05);
+}
+
+.scroll-btn:active {
+    transform: translateY(4px);
+    box-shadow:
+        0 6px 0 rgba(70, 0, 0, 0.55),
+        0 12px 20px rgba(0, 0, 0, 0.22);
+}
+
+.scroll-btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow:
+        0 6px 0 rgba(70, 0, 0, 0.35),
+        0 10px 18px rgba(0, 0, 0, 0.18);
+}
+
+/* 上一頁：金色膠印 */
+.scroll-btn.ghost {
+    background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.35), transparent 55%),
+        linear-gradient(135deg, #FFE066 0%, #FFD700 45%, #F4B400 100%);
+    color: #7a0000;
+    border: 2px solid rgba(122, 0, 0, 0.35);
+}
+
+/* 下一頁：紅金漸層（主動作按鈕） */
+.scroll-btn:not(.ghost):not(.primary) {
+    background:
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.18), transparent 55%),
+        linear-gradient(135deg, #FF2E2E 0%, #B30000 55%, #7A0000 100%);
+    color: #FFD700;
+}
+
+/* 活動開始：綠金（更醒目） */
+.scroll-btn.primary {
+    background:
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.22), transparent 55%),
+        linear-gradient(135deg, #00D26A 0%, #00A84A 55%, #007C32 100%);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+}
+
+/* =========================
+   ✅ 導覽內文：更好讀
+========================= */
+
+/* 標題與副標：微調更舒服 */
+.scroll-title {
+    font-size: 38px;
+    line-height: 1.15;
+    margin-bottom: 2px;
+}
+
+.scroll-sub {
+    font-size: 18px;
+    line-height: 1.35;
+    opacity: 0.95;
+    margin-bottom: 6px;
+}
+
+/* 內容區：留白與行距 */
+.scroll-body {
+    padding: 18px 18px;
+}
+
+/* 列表：字級/行距/縮排 */
+.scroll-list {
+    margin: 6px 0 0 6px;
+    padding-left: 18px;
+    font-size: 18px;
+    line-height: 1.9;
+    letter-spacing: 0.2px;
+}
+
+/* 每一條之間多一點距離 */
+.scroll-list li {
+    margin: 8px 0;
+}
+
+/* 如果你有一般文字段落，也讓它好讀 */
+.scroll-body p {
+    font-size: 18px;
+    line-height: 1.9;
+    margin: 10px 0;
+    color: #8B0000;
+}
+
+/* 內容最大寬度（避免太寬不好讀） */
+.scroll-content {
+    max-width: 820px;
+    margin: 0 auto;
+}
+
+/* =========================
+   ✅ 修正：導覽翻頁中間框跳動
+   只固定 #introModal 的內容框，不動其他樣式
+========================= */
+
+/* 固定內容框布局：title / sub / body / footer */
+#introModal .scroll-content {
+    /* 用 grid 固定區塊，避免翻頁撐高縮小 */
+    display: grid !important;
+    grid-template-rows:
+        60px
+        /* title 固定高度 */
+        44px
+        /* sub 固定高度 */
+        1fr
+        /* body 吃剩下高度 */
+        90px;
+    /* footer 固定高度 */
+    gap: 12px !important;
+
+    /* 固定整個內容框高度（配合 inset: 18px） */
+    height: calc(100% - 36px) !important;
+    box-sizing: border-box;
+}
+
+/* 讓 title/sub 不會因文字多就撐高 */
+#introModal .scroll-title,
+#introModal .scroll-sub {
+    overflow: hidden;
+}
+
+/* ✅ 關鍵：讓 body 可以縮 + 內容只在 body 裡面滾動 */
+#introModal .scroll-body {
+    min-height: 230px !important;
+    /* 超重要：不然會切字或擠爆 */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 24px;
+    /* 最後一行不會貼底被遮 */
+}
+
+/* footer 固定在底部，不被內容影響 */
+#introModal .scroll-footer {
+    align-self: end;
+    /* height: 90px; */
+}
+
+/* ===== ✅ 活動完成彈窗 ===== */
+.complete-card {
+    position: relative;
+    width: 420px;
+    min-height: 520px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+    border-radius: 30px;
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.7),
+        inset 0 0 50px rgba(255, 255, 255, 0.4);
+    animation: completeEnter 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+    overflow: hidden;
+    border: 6px solid #FF0000;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@keyframes completeEnter {
+    0% {
+        transform: scale(0) rotate(-360deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.15) rotate(10deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* 背景馬年裝飾 */
+.complete-card::before {
+    content: '🐴';
+    position: absolute;
+    font-size: 200px;
+    opacity: 0.08;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+.complete-header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.complete-emoji {
+    font-size: 80px;
+    animation: completeEmojiBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes completeEmojiBounce {
+    0%, 100% {
+        transform: scale(1) translateY(0);
+    }
+
+    50% {
+        transform: scale(1.1) translateY(-20px);
+    }
+}
+
+.complete-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 25px;
+    padding: 35px 25px;
+    margin-bottom: 25px;
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.3),
+        inset 0 0 30px rgba(255, 215, 0, 0.3);
+    border: 4px solid #FF0000;
+    width: 100%;
+}
+
+.complete-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #8B0000;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 0 #FFD700;
+    letter-spacing: 2px;
+}
+
+.complete-message {
+    font-size: 48px;
+    font-weight: 900;
+    color: #FF0000;
+    text-shadow:
+        3px 3px 0 #FFD700,
+        6px 6px 20px rgba(0, 0, 0, 0.3);
+    animation: completeMessageGlow 2s ease-in-out infinite;
+}
+
+@keyframes completeMessageGlow {
+    0%, 100% {
+        text-shadow:
+            3px 3px 0 #FFD700,
+            6px 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    50% {
+        text-shadow:
+            3px 3px 0 #FFD700,
+            6px 6px 35px rgba(255, 215, 0, 0.6),
+            0 0 30px rgba(255, 215, 0, 0.4);
+    }
+}
+
+.complete-footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.complete-blessing {
+    font-size: 22px;
+    font-weight: bold;
+    color: #8B0000;
+    margin-bottom: 12px;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.6);
+}
+
+.complete-wish {
+    font-size: 20px;
+    font-weight: bold;
+    color: #FF0000;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.6);
+}
+
+.complete-confirm-button {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #FF0000, #8B0000);
+    color: #FFD700;
+    font-size: 26px;
+    font-weight: bold;
+    padding: 18px 70px;
+    border: 4px solid #FFD700;
+    border-radius: 40px;
+    cursor: pointer;
+    box-shadow:
+        0 8px 0 #660000,
+        0 15px 35px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s;
+    width: 100%;
+    max-width: 340px;
+}
+
+.complete-confirm-button:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 12px 0 #660000,
+        0 20px 45px rgba(0, 0, 0, 0.6);
+}
+
+.complete-confirm-button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 6px 0 #660000,
+        0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* 完成彈窗響應式 */
+@media (max-width: 768px) {
+    .complete-card {
+        width: 340px;
+        min-height: 480px;
+        padding: 30px 25px;
+    }
+
+    .complete-emoji {
+        font-size: 60px;
+    }
+
+    .complete-title {
+        font-size: 22px;
+        margin-bottom: 10px;
+    }
+
+    .complete-message {
+        font-size: 38px;
+    }
+
+    .complete-blessing {
+        font-size: 18px;
+    }
+
+    .complete-wish {
+        font-size: 16px;
+    }
+
+    .complete-confirm-button {
+        font-size: 20px;
+        padding: 14px 50px;
+    }
+
+    .complete-card::before {
+        font-size: 150px;
+    }
+}

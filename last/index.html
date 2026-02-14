@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐴 吳家馬年摸彩箱 🧧</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- 背景音樂 -->
+  <audio id="bgMusic" loop>
+    <source src="神曲 尾牙必聽！花木蘭 以妳為榮 老祖宗保佑我聽完中大獎！！！.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- 裝飾：燈籠（右邊可點切換音樂） -->
+  <div class="decoration lantern lantern-left"></div>
+  <div class="decoration lantern lantern-right" id="musicControl" title="點我切換音樂"></div>
+
+  <div class="container">
+    <!-- 標題 -->
+    <div class="header">
+      <div class="title">🐴 吳家馬年摸彩箱 🧧</div>
+      <div class="subtitle">金馬迎春，福滿乾坤</div>
+    </div>
+
+    <!-- 主要內容區 -->
+    <div class="main-content">
+      <!-- 左側：抽獎區 -->
+      <div class="draw-area">
+        <div class="result-display">
+          <div id="resultNumber" class="result-number" style="display:none;"></div>
+          <button id="drawButton" class="draw-button">🎊 開始抽獎 🎊</button>
+        </div>
+      </div>
+
+      <!-- 右側：資訊區 -->
+      <div class="side-area">
+        <div class="info-section">
+          <div class="info-box">
+            <div class="info-label">剩餘號碼</div>
+            <div id="remaining" class="info-value">13</div>
+          </div>
+          <div class="info-box">
+            <div class="info-label">已抽出</div>
+            <div id="drawnCount" class="info-value">0</div>
+          </div>
+        </div>
+
+        <div class="drawn-section">
+          <div class="drawn-title">已抽出的號碼</div>
+          <div id="drawnNumbers" class="drawn-numbers"></div>
+        </div>
+      </div>
+    </div>
+
+    <button id="resetButton" class="reset-button">🔄 重新開始</button>
+  </div>
+
+  <!-- ✅ 吉祥話紅包彈窗 -->
+  <div id="redEnvelopeModal" class="modal">
+    <div class="modal-overlay" id="redEnvelopeOverlay"></div>
+    <div class="red-envelope">
+      <div class="envelope-top"></div>
+      <div class="envelope-body">
+        <div class="blessing-text" id="blessingText">恭喜發財</div>
+      </div>
+      <div class="envelope-flap"></div>
+      <div class="envelope-seal">吉祥話</div>
+      <button id="closeModal" class="confirm-button">確定</button>
+    </div>
+  </div>
+
+  <!-- ✅ 獎項彈窗（含得獎者） -->
+  <div id="prizeModal" class="modal">
+    <div class="modal-overlay" id="prizeOverlay"></div>
+    <div class="prize-card">
+      <div class="prize-header">
+        <div class="prize-sparkle">✨</div>
+        <div class="prize-title">恭喜中獎！</div>
+        <div class="prize-sparkle">✨</div>
+      </div>
+
+      <div class="prize-content">
+        <div class="prize-number-label">抽中號碼</div>
+        <div class="prize-number" id="prizeNumber">1</div>
+
+        <div class="prize-award-label" style="margin-top:10px;">得獎者</div>
+        <div class="prize-award" id="prizeWinner">（得獎者）</div>
+
+        <div class="prize-divider"></div>
+
+        <div class="prize-award-label">獎項</div>
+        <div class="prize-award" id="prizeAward">（獎項）</div>
+      </div>
+
+      <div class="prize-footer">
+        <div class="prize-blessing">祝您馬年大吉！</div>
+      </div>
+
+      <button id="closePrizeModal" class="prize-confirm-button">確定</button>
+    </div>
+  </div>
+
+  <!-- ✅ 輪到誰抽彈窗 -->
+  <div id="turnModal" class="modal">
+    <div class="modal-overlay" id="turnOverlay"></div>
+    <div class="prize-card" style="min-height:360px;">
+      <div class="prize-header">
+        <div class="prize-sparkle">🐴</div>
+        <div class="prize-title" style="font-size:36px;">輪到你抽囉！</div>
+        <div class="prize-sparkle">🧧</div>
+      </div>
+
+      <div class="prize-content">
+        <div class="prize-number-label">本輪抽獎者</div>
+        <div class="prize-number" id="turnName" style="font-size:56px;">（姓名）</div>
+        <div class="prize-divider"></div>
+        <div class="prize-award-label">請按「開始抽獎」抽號碼</div>
+      </div>
+
+      <button id="closeTurnModal" class="prize-confirm-button">確定</button>
+    </div>
+  </div>
+
+  <!-- ✅ 活動完成彈窗 -->
+  <div id="completeModal" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="complete-card">
+      <div class="complete-header">
+        <div class="complete-emoji">🎊</div>
+      </div>
+      <div class="complete-content">
+        <div class="complete-title">本屆吳家馬年摸彩活動</div>
+        <div class="complete-message">圓滿結束</div>
+      </div>
+      <div class="complete-footer">
+        <div class="complete-blessing">感謝大家的參與</div>
+        <div class="complete-wish">馬年行運 事事如意</div>
+      </div>
+      <button id="completeButton" class="complete-confirm-button">完成</button>
+    </div>
+  </div>
+
+  <!-- ✅ 開場捲軸導覽：先卷起來，中間「開始」按鈕 -->
+  <div id="introModal" class="modal show intro-closed">
+    <div class="modal-overlay" id="introOverlay"></div>
+
+    <div class="scroll-wrap" role="dialog" aria-modal="true">
+      <!-- 左右捲軸 -->
+      <div class="scroll-panel left"></div>
+      <div class="scroll-panel right"></div>
+
+      <!-- 卷起來時顯示 -->
+      <div class="scroll-closed-center">
+        <div class="scroll-closed-title">📜 吳家摸彩節目</div>
+        <button id="introOpen" class="scroll-start-btn">開始</button>
+        <!-- <div class="scroll-closed-sub">點開始後捲軸會打開</div> -->
+      </div>
+
+      <!-- 打開後顯示（內容由 JS 填） -->
+      <div class="scroll-content">
+        <div class="scroll-title" id="introTitle"></div>
+        <div class="scroll-sub" id="introSub"></div>
+        <div class="scroll-body" id="introBody"></div>
+
+        <div class="scroll-footer">
+          <div class="scroll-actions">
+            <button id="introPrev" class="scroll-btn ghost" disabled>上一頁</button>
+            <button id="introNext" class="scroll-btn">下一頁</button>
+            <button id="introStart" class="scroll-btn primary" style="display:none;">活動開始</button>
+          </div>
+          <div class="scroll-dots" id="introDots"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

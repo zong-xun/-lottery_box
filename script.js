@@ -342,7 +342,7 @@ class LotteryBox {
         if (this.currentDrawnNumber !== null) {
             setTimeout(() => {
                 this.showPrize();
-            }, 200);
+            }, 300);
         }
     }
 
@@ -395,3 +395,15 @@ class LotteryBox {
 
 // 啟動應用
 const lottery = new LotteryBox();
+
+
+
+
+
+
+
+
+
+
+
+
