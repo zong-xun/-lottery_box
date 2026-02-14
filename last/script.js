@@ -137,7 +137,7 @@ class LotteryBox {
         this.init();                 // 只初始化 UI，不開始抽
         this.setupEventListeners();
         this.createCoins();
-        this.autoPlayMusic();
+        
 
         // ✅ 先鎖抽獎按鈕：等「活動開始」才開放
         const btn = document.getElementById('drawButton');
@@ -587,6 +587,23 @@ const introPages = [
     renderDots();
   };
 
+  const autoPlayMusic1 = () => {
+        this.bgMusic.play().then(() => {
+            this.isMusicPlaying = true;
+            this.musicControl.classList.remove('muted');
+        }).catch(() => {
+            this.musicControl.classList.add('muted');
+            document.addEventListener('click', () => {
+                if (!this.isMusicPlaying) {
+                    this.bgMusic.play().then(() => {
+                        this.isMusicPlaying = true;
+                        this.musicControl.classList.remove('muted');
+                    }).catch(() => { });
+                }
+            }, { once: true });
+        });
+    }
+
   prevBtn.addEventListener('click', () => { idx = Math.max(0, idx - 1); render(); });
   nextBtn.addEventListener('click', () => { idx = Math.min(introPages.length - 1, idx + 1); render(); });
 
@@ -594,6 +611,7 @@ const introPages = [
   openBtn.addEventListener('click', () => {
     modal.classList.remove('intro-closed');
     modal.classList.add('intro-open');
+    autoPlayMusic1();
     render();
   });
 
