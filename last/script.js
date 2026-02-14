@@ -1,66 +1,150 @@
 // 音效系統
+// const AudioSystem = {
+//     context: null,
+
+//     init() {
+//         this.context = new (window.AudioContext || window.webkitAudioContext)();
+//     },
+
+//     playDrum() {
+//         if (!this.context) this.init();
+//         const osc = this.context.createOscillator();
+//         const gain = this.context.createGain();
+
+//         osc.connect(gain);
+//         gain.connect(this.context.destination);
+
+//         osc.frequency.value = 100;
+//         gain.gain.setValueAtTime(0.3*8, this.context.currentTime);
+//         gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.1);
+
+//         osc.start(this.context.currentTime);
+//         osc.stop(this.context.currentTime + 0.1);
+//     },
+
+//     playWin() {
+//         if (!this.context) this.init();
+//         const notes = [523.25, 587.33, 659.25, 783.99];
+
+//         notes.forEach((freq, i) => {
+//             setTimeout(() => {
+//                 const osc = this.context.createOscillator();
+//                 const gain = this.context.createGain();
+
+//                 osc.connect(gain);
+//                 gain.connect(this.context.destination);
+
+//                 osc.frequency.value = freq;
+//                 osc.type = 'sine';
+//                 gain.gain.setValueAtTime(0.2, this.context.currentTime);
+//                 gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.3);
+
+//                 osc.start(this.context.currentTime);
+//                 osc.stop(this.context.currentTime + 0.3);
+//             }, i * 100);
+//         });
+//     },
+
+//     playReset() {
+//         if (!this.context) this.init();
+//         const osc = this.context.createOscillator();
+//         const gain = this.context.createGain();
+
+//         osc.connect(gain);
+//         gain.connect(this.context.destination);
+
+//         osc.frequency.setValueAtTime(800, this.context.currentTime);
+//         osc.frequency.exponentialRampToValueAtTime(400, this.context.currentTime + 0.2);
+//         gain.gain.setValueAtTime(0.2, this.context.currentTime);
+//         gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.2);
+
+//         osc.start(this.context.currentTime);
+//         osc.stop(this.context.currentTime + 0.2);
+//     }
+// };
+// 音效系統（重構後）
 const AudioSystem = {
-    context: null,
+  context: null,
+  drumTimer: null,
 
-    init() {
-        this.context = new (window.AudioContext || window.webkitAudioContext)();
-    },
+  init() {
+    this.context = new (window.AudioContext || window.webkitAudioContext)();
+  },
 
-    playDrum() {
-        if (!this.context) this.init();
-        const osc = this.context.createOscillator();
-        const gain = this.context.createGain();
+  // ✅ 單一下「鼓點」（自然、不卡）
+  drumHit() {
+    if (!this.context) this.init();
+    const ctx = this.context;
 
-        osc.connect(gain);
-        gain.connect(this.context.destination);
+    // 有些瀏覽器需要 user gesture 後 resume
+    if (ctx.state === "suspended") ctx.resume().catch(() => {});
 
-        osc.frequency.value = 100;
-        gain.gain.setValueAtTime(0.3, this.context.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.1);
+    const t = ctx.currentTime;
 
-        osc.start(this.context.currentTime);
-        osc.stop(this.context.currentTime + 0.1);
-    },
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
 
-    playWin() {
-        if (!this.context) this.init();
-        const notes = [523.25, 587.33, 659.25, 783.99];
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(160, t);
+    osc.frequency.exponentialRampToValueAtTime(55, t + 0.07);
 
-        notes.forEach((freq, i) => {
-            setTimeout(() => {
-                const osc = this.context.createOscillator();
-                const gain = this.context.createGain();
+    gain.gain.setValueAtTime(0.55, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
 
-                osc.connect(gain);
-                gain.connect(this.context.destination);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
 
-                osc.frequency.value = freq;
-                osc.type = 'sine';
-                gain.gain.setValueAtTime(0.2, this.context.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.3);
+    osc.start(t);
+    osc.stop(t + 0.08);
+  },
 
-                osc.start(this.context.currentTime);
-                osc.stop(this.context.currentTime + 0.3);
-            }, i * 100);
-        });
-    },
+  // ✅ 開始 Drum Roll：用 interval 連打（不會當）
+  startDrumRoll() {
+    if (this.drumTimer) return; // 已經在打了
+    let interval = 90;          // 初始間隔(ms)
+    const minInterval = 45;     // 最快間隔(ms)
 
-    playReset() {
-        if (!this.context) this.init();
-        const osc = this.context.createOscillator();
-        const gain = this.context.createGain();
+    // 先敲一下立刻有反應
+    this.drumHit();
 
-        osc.connect(gain);
-        gain.connect(this.context.destination);
+    this.drumTimer = setInterval(() => {
+      this.drumHit();
+      // 越來越快（有張力）
+      interval = Math.max(minInterval, Math.floor(interval * 0.92));
 
-        osc.frequency.setValueAtTime(800, this.context.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(400, this.context.currentTime + 0.2);
-        gain.gain.setValueAtTime(0.2, this.context.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.2);
+      // 動態調整 interval：重設 timer
+      clearInterval(this.drumTimer);
+      this.drumTimer = setInterval(() => this.drumHit(), interval);
+    }, interval);
+  },
 
-        osc.start(this.context.currentTime);
-        osc.stop(this.context.currentTime + 0.2);
+  // ✅ 停止 Drum Roll
+  stopDrumRoll() {
+    if (this.drumTimer) {
+      clearInterval(this.drumTimer);
+      this.drumTimer = null;
     }
+  },
+
+  // 你原本的 playWin 保留就好（不動）
+  playWin() {
+    if (!this.context) this.init();
+    const notes = [523.25, 587.33, 659.25, 783.99];
+    notes.forEach((freq, i) => {
+      setTimeout(() => {
+        const osc = this.context.createOscillator();
+        const gain = this.context.createGain();
+        osc.connect(gain);
+        gain.connect(this.context.destination);
+        osc.frequency.value = freq;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.2, this.context.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.28);
+        osc.start(this.context.currentTime);
+        osc.stop(this.context.currentTime + 0.28);
+      }, i * 90);
+    });
+  }
 };
 
 class LotteryBox {
@@ -72,6 +156,10 @@ class LotteryBox {
         this.bgMusic = document.getElementById('bgMusic');
         this.musicControl = document.getElementById('musicControl');
         this.isMusicPlaying = false;
+
+        this.musicNormalVolume = 0.8;   // 平常音量
+        this.musicDrawVolume = 0.25;    // 抽獎時音量
+this.musicFadeMs = 450;         // 淡入淡出時間(ms)
 
         this.currentDrawnNumber = null;
         this.isViewingHistoryPrize = false;
@@ -234,6 +322,26 @@ class LotteryBox {
         }
     }
 
+    // ✅ 平滑調整背景音樂音量
+    fadeMusicVolume(target, durationMs = 400) {
+    if (!this.bgMusic) return;
+
+    const start = this.bgMusic.volume ?? 1;
+    const end = Math.max(0, Math.min(1, target));
+    const startTime = performance.now();
+
+    const step = (t) => {
+        const p = Math.min(1, (t - startTime) / durationMs);
+        // easeOut
+        const eased = 1 - Math.pow(1 - p, 3);
+        this.bgMusic.volume = start + (end - start) * eased;
+
+        if (p < 1) requestAnimationFrame(step);
+    };
+
+  requestAnimationFrame(step);
+}
+
     createCoins() {
         for (let i = 0; i < 8; i++) {
             const coin = document.createElement('div');
@@ -326,7 +434,9 @@ class LotteryBox {
         if (!this.currentParticipant) return;
 
         this.isDrawing = true;
-
+        AudioSystem.startDrumRoll(); // ✅ 開始鼓點（新的方法）
+        // ✅ 抽獎期間音樂調小
+        this.fadeMusicVolume(this.musicDrawVolume, this.musicFadeMs);
         const button = document.getElementById('drawButton');
         const resultNumber = document.getElementById('resultNumber');
 
@@ -340,7 +450,7 @@ class LotteryBox {
         const rollTimes = rollDuration / rollInterval;
 
         for (let i = 0; i < rollTimes; i++) {
-            AudioSystem.playDrum();
+            // AudioSystem.playDrum();
             resultNumber.textContent = Math.floor(Math.random() * 13) + 1;
             await this.sleep(rollInterval);
         }
@@ -355,8 +465,13 @@ class LotteryBox {
         this.winners[drawnNumber] = this.currentParticipant;
 
         resultNumber.classList.remove('rolling');
+        AudioSystem.stopDrumRoll(); // ✅ 停止鼓點（新的方式）  
         resultNumber.textContent = drawnNumber;
         resultNumber.classList.add('pop');
+
+
+        // ✅ 抽完回復正常音量
+        this.fadeMusicVolume(this.musicNormalVolume, this.musicFadeMs);
 
         AudioSystem.playWin();
         this.createParticles();
@@ -595,6 +710,7 @@ const introPages = [
             this.musicControl.classList.add('muted');
             document.addEventListener('click', () => {
                 if (!this.isMusicPlaying) {
+                    this.bgMusic.volume = this.musicNormalVolume; // ✅ 新增
                     this.bgMusic.play().then(() => {
                         this.isMusicPlaying = true;
                         this.musicControl.classList.remove('muted');
