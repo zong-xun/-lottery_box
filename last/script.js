@@ -512,7 +512,7 @@ window.lottery = new LotteryBox();
 // ===== 開場捲軸導覽（3頁）=====
 const introPages = [
     {
-        title: '第一屆 吳家馬年摸彩節目',
+        title: '第一屆 吳家摸彩節目開跑！',
         sub: '今年總獎金高達 <span class="gold">7000</span> 元！',
         type: 'intro'
     },
@@ -562,10 +562,9 @@ const introPages = [
     if (p.type === 'intro') {
       bodyEl.innerHTML = `
         <ul class="scroll-list">
-          <li>第一屆 吳家摸彩節目開跑！</li>
-          <li>本次抽號碼：1～13</li>
-          <li>每輪會提示「本輪抽獎者」</li>
-          <li>抽到會顯示吉祥話 + 獎項</li>
+          <li>本龍來你家玩樂爽翻天</li>
+          <li>馬到吳門笑鬧喜連天</li>
+          <li>抽橫批…笑到變有錢</li>
         </ul>
       `;
     } else if (p.type === 'prizes') {

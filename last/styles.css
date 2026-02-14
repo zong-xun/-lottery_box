@@ -1098,7 +1098,7 @@ body {
 
 .scroll-wrap {
     position: relative;
-    width: min(860px, 92vw);
+    width: min(700px, 92vw);
     height: min(620px, 78vh);
     border-radius: 22px;
     overflow: hidden;
@@ -1305,6 +1305,9 @@ body {
 }
 
 .scroll-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex: 1;
     padding: 12px 14px;
     border-radius: 14px;
@@ -1320,7 +1323,9 @@ body {
     line-height: 1.7;
     font-weight: 650;
 }
-
+.scroll-list li{ 
+    list-style: none;  
+}
 .scroll-footer {
     display: flex;
     align-items: center;
@@ -1445,7 +1450,7 @@ body {
 .scroll-list {
     margin: 6px 0 0 6px;
     padding-left: 18px;
-    font-size: 18px;
+    font-size: 23px;
     line-height: 1.9;
     letter-spacing: 0.2px;
 }
@@ -1502,7 +1507,7 @@ body {
 
 /* ✅ 關鍵：讓 body 可以縮 + 內容只在 body 裡面滾動 */
 #introModal .scroll-body {
-    min-height: 230px !important;
+    min-height: 280px !important;
     /* 超重要：不然會切字或擠爆 */
     overflow-y: auto !important;
     overflow-x: hidden !important;
