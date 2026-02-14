@@ -1735,3 +1735,160 @@ body {
         font-size: 150px;
     }
 }
+
+/* =========================
+   ✅ RWD 修正：開場捲軸避免跑版（只影響捲軸區）
+========================= */
+
+/* 讓 modal 在小螢幕有安全邊距，不貼邊 */
+@media (max-width: 768px) {
+  #introModal.modal.show{
+    padding: 14px;
+  }
+}
+
+/* 手機/小螢幕：縮捲軸本體，避免高度不夠時爆版 */
+@media (max-width: 600px) {
+  .scroll-wrap{
+    width: min(92vw, 520px);
+    height: min(560px, calc(100vh - 28px));
+    border-radius: 18px;
+  }
+
+  .scroll-content{
+    inset: 12px;                 /* 內容框縮小邊距 */
+    padding: 18px;               /* 內距縮小 */
+    max-width: none;             /* 取消 820px 的限制，避免怪異置中/溢出 */
+  }
+
+  /* 固定分區高度略縮，手機比較舒服 */
+  #introModal .scroll-content{
+    grid-template-rows: 54px 40px 1fr 86px;
+    height: calc(100% - 24px) !important;  /* inset 12px * 2 */
+  }
+
+  .scroll-title{
+    font-size: 28px;
+    text-shadow: 1px 1px 0 #FFD700, 2px 2px 8px rgba(0,0,0,0.15);
+  }
+  .scroll-sub{
+    font-size: 16px;
+  }
+  .scroll-sub .gold{
+    font-size: 20px;
+  }
+
+  /* ✅ 內容區不要置中（你原本 scroll-body 用 flex 置中，手機會擠） */
+  .scroll-body{
+    display: block;
+  }
+  .scroll-list{
+    font-size: 18px;
+    line-height: 1.75;
+  }
+
+  /* ✅ 按鈕群：手機改成可換行/更小 */
+  .scroll-actions{
+    gap: 10px;
+  }
+  .scroll-btn{
+    min-width: 104px;
+    height: 42px;
+    font-size: 15px;
+  }
+
+  /* ✅ 捲軸卷起來的開始按鈕縮小，避免爆版 */
+  .scroll-start-btn{
+    width: min(78vw, 260px);
+    height: 76px;
+    font-size: 44px;
+    padding: 10px 18px;
+  }
+
+  .scroll-closed-title{
+    font-size: 30px;
+  }
+}
+
+/* 更小（例如 360px 寬）：再縮一階 */
+@media (max-width: 380px) {
+  .scroll-wrap{
+    height: min(520px, calc(100vh - 22px));
+  }
+
+  .scroll-content{
+    inset: 10px;
+    padding: 16px;
+  }
+
+  #introModal .scroll-content{
+    grid-template-rows: 50px 38px 1fr 84px;
+    height: calc(100% - 20px) !important;
+  }
+
+  .scroll-title{ font-size: 24px; }
+  .scroll-sub{ font-size: 15px; }
+  .scroll-list{ font-size: 17px; }
+
+  .scroll-start-btn{
+    width: min(82vw, 240px);
+    height: 70px;
+    font-size: 40px;
+  }
+}
+
+/* =========================
+   ✅ RWD：標題/副標不切字（只在小螢幕）
+========================= */
+@media (max-width: 600px) {
+  /* 讓 title/sub 高度自適應，不再固定 60/44 */
+  #introModal .scroll-content{
+    grid-template-rows: auto auto 1fr 86px !important;
+  }
+
+  /* 標題可換行，不裁切 */
+  #introModal .scroll-title{
+    height: auto !important;
+    line-height: 1.15;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+
+    /* 字級自動縮放：小螢幕不會太大而換行爆掉 */
+    font-size: clamp(22px, 6vw, 30px) !important;
+
+    /* 讓多行時仍置中 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2px 6px;
+  }
+
+  /* 副標可換行，不裁切 */
+  #introModal .scroll-sub{
+    height: auto !important;
+    line-height: 1.25;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+
+    font-size: clamp(14px, 4.2vw, 18px) !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 8px;
+  }
+}
+
+/* 更小螢幕再保險一階 */
+@media (max-width: 380px) {
+  #introModal .scroll-content{
+    grid-template-rows: auto auto 1fr 84px !important;
+  }
+  #introModal .scroll-title{
+    font-size: clamp(20px, 6.5vw, 26px) !important;
+  }
+}
