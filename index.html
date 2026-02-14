@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐴 馬年摸彩箱 🧧</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 背景音樂 -->
+    <audio id="bgMusic" loop>
+        <source src="神曲 尾牙必聽！花木蘭 以妳為榮 老祖宗保佑我聽完中大獎！！！.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 裝飾元素 -->
+    <div class="decoration lantern lantern-left"></div>
+    <div class="decoration lantern lantern-right" id="musicControl"></div>
+
+    <div class="container">
+        <!-- 標題 -->
+        <div class="header">
+            <div class="title">🐴 吳家馬年摸彩箱 🧧</div>
+            <div class="subtitle">金馬迎春，福滿乾坤</div>
+        </div>
+
+        <!-- 主要內容區 - 左右排列 -->
+        <div class="main-content">
+            <!-- 左側：抽獎區 -->
+            <div class="draw-area">
+                <div class="result-display">
+                    <div id="resultNumber" class="result-number" style="display: none;"></div>
+                    <button id="drawButton" class="draw-button">🎊 開始抽獎 🎊</button>
+                </div>
+            </div>
+
+            <!-- 右側：資訊區 -->
+            <div class="side-area">
+                <div class="info-section">
+                    <div class="info-box">
+                        <div class="info-label">剩餘號碼</div>
+                        <div id="remaining" class="info-value">30</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-label">已抽出</div>
+                        <div id="drawnCount" class="info-value">0</div>
+                    </div>
+                </div>
+
+                <!-- 已抽出號碼 -->
+                <div class="drawn-section">
+                    <div class="drawn-title">已抽出的號碼</div>
+                    <div id="drawnNumbers" class="drawn-numbers"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 重新開始 -->
+        <button id="resetButton" class="reset-button">🔄 重新開始</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
