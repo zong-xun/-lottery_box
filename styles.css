@@ -504,3 +504,491 @@ body {
         font-size: 18px;
     }
 }
+
+/* 紅包彈窗 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.show {
+    display: flex;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+/* 紅包設計 */
+.red-envelope {
+    position: relative;
+    width: 340px;
+    height: 500px;
+    background: linear-gradient(135deg, #FF0000 0%, #DC143C 50%, #8B0000 100%);
+    border-radius: 20px;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 0 30px rgba(255, 215, 0, 0.2);
+    animation: envelopeEnter 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+    overflow: hidden;
+    border: 3px solid #FFD700;
+}
+
+@keyframes envelopeEnter {
+    0% {
+        transform: scale(0) rotate(-180deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1) rotate(10deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* 紅包上半部 */
+.envelope-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(135deg, #DC143C, #8B0000);
+    border-radius: 20px 20px 0 0;
+    z-index: 1;
+}
+
+/* 紅包主體 */
+.envelope-body {
+    position: absolute;
+    top: 32%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    height: 42%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px 20px;
+    box-shadow: 
+        0 5px 20px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 215, 0, 0.1);
+    z-index: 3;
+    border: 2px solid #FFD700;
+}
+
+/* 吉祥話文字 */
+.blessing-text {
+    font-size: 30px;
+    font-weight: bold;
+    color: #8B0000;
+    text-align: center;
+    line-height: 1.6;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    animation: textGlow 2s ease-in-out infinite;
+    width: 100%;
+}
+
+@keyframes textGlow {
+    0%, 100% {
+        text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.8),
+                     0 0 20px rgba(255, 215, 0, 0.5);
+    }
+}
+
+/* 紅包封口 */
+.envelope-flap {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 160px solid transparent;
+    border-right: 160px solid transparent;
+    border-top: 80px solid #B22222;
+    z-index: 2;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+}
+
+/* 紅包福字印章 */
+.envelope-seal {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #FFD700, #FFA500);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    font-weight: bold;
+    color: #8B0000;
+    border: 4px solid #FF6347;
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.3);
+    z-index: 4;
+    animation: sealPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes sealPulse {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 
+            0 5px 20px rgba(0, 0, 0, 0.5),
+            inset 0 0 15px rgba(255, 255, 255, 0.5),
+            0 0 20px rgba(255, 215, 0, 0.6);
+    }
+}
+
+/* 確定按鈕 */
+.confirm-button {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B0000;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 15px 50px;
+    border: 3px solid #FF6347;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 
+        0 5px 0 #CC8800,
+        0 8px 20px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s;
+    z-index: 5;
+}
+
+.confirm-button:hover {
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 
+        0 7px 0 #CC8800,
+        0 12px 25px rgba(0, 0, 0, 0.5);
+}
+
+.confirm-button:active {
+    transform: translateX(-50%) translateY(2px);
+    box-shadow: 
+        0 3px 0 #CC8800,
+        0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* 紅包裝飾花紋 */
+.envelope-top::before,
+.envelope-top::after {
+    content: '🐴';
+    position: absolute;
+    font-size: 40px;
+    opacity: 0.3;
+}
+
+.envelope-top::before {
+    top: 20px;
+    left: 30px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.envelope-top::after {
+    top: 20px;
+    right: 30px;
+    animation: float 3s ease-in-out infinite 1.5s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* 響應式設計 - 紅包 */
+@media (max-width: 768px) {
+    .red-envelope {
+        width: 300px;
+        height: 450px;
+    }
+    
+    .blessing-text {
+        font-size: 26px;
+        line-height: 1.5;
+        letter-spacing: 1px;
+    }
+    
+    .envelope-seal {
+        width: 70px;
+        height: 70px;
+        font-size: 36px;
+    }
+    
+    .confirm-button {
+        font-size: 20px;
+        padding: 12px 40px;
+        bottom: 35px;
+    }
+}
+
+/* 獎項彈窗 */
+.prize-card {
+    position: relative;
+    width: 400px;
+    min-height: 480px;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+    border-radius: 25px;
+    box-shadow: 
+        0 25px 70px rgba(0, 0, 0, 0.6),
+        inset 0 0 40px rgba(255, 255, 255, 0.3);
+    animation: prizeEnter 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+    overflow: hidden;
+    border: 5px solid #FF0000;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes prizeEnter {
+    0% {
+        transform: scale(0) rotateY(180deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1) rotateY(0deg);
+    }
+    100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+    }
+}
+
+.prize-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.prize-sparkle {
+    font-size: 36px;
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2) rotate(180deg);
+        opacity: 0.8;
+    }
+}
+
+.prize-title {
+    font-size: 42px;
+    font-weight: bold;
+    color: #8B0000;
+    text-shadow: 
+        2px 2px 0 #FFD700,
+        4px 4px 10px rgba(0, 0, 0, 0.3);
+    animation: titleBounce 2s ease-in-out infinite;
+}
+
+@keyframes titleBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.prize-content {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 215, 0, 0.2);
+    border: 3px solid #FF6347;
+    margin-bottom: 20px;
+}
+
+.prize-number-label,
+.prize-award-label {
+    font-size: 18px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.prize-number {
+    font-size: 72px;
+    font-weight: bold;
+    color: #FF0000;
+    text-align: center;
+    text-shadow: 
+        3px 3px 0 #FFD700,
+        6px 6px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 20px;
+    animation: numberPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes numberPulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.prize-divider {
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(to right, transparent, #FFD700, transparent);
+    margin: 20px auto;
+}
+
+.prize-award {
+    font-size: 36px;
+    font-weight: bold;
+    color: #8B0000;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    animation: awardGlow 2s ease-in-out infinite;
+}
+
+@keyframes awardGlow {
+    0%, 100% {
+        text-shadow: 1px 1px 2px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        text-shadow: 
+            0 0 15px rgba(255, 215, 0, 0.8),
+            0 0 25px rgba(255, 215, 0, 0.5);
+    }
+}
+
+.prize-footer {
+    margin-bottom: 20px;
+}
+
+.prize-blessing {
+    font-size: 24px;
+    color: #8B0000;
+    text-align: center;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.prize-confirm-button {
+    background: linear-gradient(135deg, #FF0000, #8B0000);
+    color: #FFD700;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 15px 60px;
+    border: 4px solid #FFD700;
+    border-radius: 35px;
+    cursor: pointer;
+    box-shadow: 
+        0 6px 0 #660000,
+        0 10px 25px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s;
+    position: relative;
+}
+
+.prize-confirm-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 8px 0 #660000,
+        0 15px 30px rgba(0, 0, 0, 0.6);
+}
+
+.prize-confirm-button:active {
+    transform: translateY(2px);
+    box-shadow: 
+        0 4px 0 #660000,
+        0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* 獎項彈窗響應式 */
+@media (max-width: 768px) {
+    .prize-card {
+        width: 320px;
+        min-height: 450px;
+        padding: 25px;
+    }
+    
+    .prize-title {
+        font-size: 36px;
+    }
+    
+    .prize-sparkle {
+        font-size: 30px;
+    }
+    
+    .prize-number {
+        font-size: 60px;
+    }
+    
+    .prize-award {
+        font-size: 30px;
+    }
+    
+    .prize-blessing {
+        font-size: 20px;
+    }
+    
+    .prize-confirm-button {
+        font-size: 20px;
+        padding: 12px 50px;
+    }
+}

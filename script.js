@@ -75,6 +75,46 @@ class LotteryBox {
         this.bgMusic = document.getElementById('bgMusic');
         this.musicControl = document.getElementById('musicControl');
         this.isMusicPlaying = false;
+        this.currentDrawnNumber = null; // 當前抽中的號碼
+        
+        // 獎項池（可後續修改）
+        this.prizePool = [
+            '🏆 2000刮刮樂',
+            '🥇 1000刮刮樂',
+            '🥈 1000刮刮樂',
+            '🥉 500刮刮樂',
+            '🥉 500刮刮樂',
+            '🎖️ 500刮刮樂',
+            '🎖️ 300刮刮樂',
+            '🎖️ 200刮刮樂',
+            '🎁 200刮刮樂',
+            '🎁 200刮刮樂',
+            '🎁 200刮刮樂',
+            '🎁 200刮刮樂',
+            '🎁 200刮刮樂'
+        ];
+        
+        // 獎項對應表（會在 init 時隨機分配）
+        this.prizes = {};
+        
+        // 吉祥話庫 - 精選馬年吉祥話（13個）
+        this.blessings = [
+            '龍馬精神\n神采奕奕',
+            '一馬當先\n萬象更新',
+            '馬到成功\n前程似錦',
+            '策馬奔騰\n志在千里',
+            '龍騰馬躍\n好運連連',
+            '駿馬迎春\n福滿人間',
+            '馬首是瞻\n共創輝煌',
+            '天馬行空\n創意無限',
+            '快馬加鞭\n事事領先',
+            '躍馬中原\n名揚四海',
+            '馬年大吉\n平安如意',
+            '萬馬奔騰\n財源廣進',
+            '金馬報喜\n大富大貴'
+        ];
+        this.availableBlessings = [...this.blessings]; // 複製一份用於追蹤未使用的吉祥話
+        
         this.init();
         this.setupEventListeners();
         this.createCoins();
@@ -104,9 +144,26 @@ class LotteryBox {
     }
 
     init() {
-        this.numbers = Array.from({length: 30}, (_, i) => i + 1);
+        this.numbers = Array.from({length: 13}, (_, i) => i + 1);
         this.drawnNumbers = [];
+        this.shufflePrizes(); // 隨機分配獎項
         this.updateDisplay();
+    }
+    
+    // 隨機分配獎項給每個號碼
+    shufflePrizes() {
+        // 複製獎項池並打亂順序
+        const shuffledPrizes = [...this.prizePool];
+        for (let i = shuffledPrizes.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledPrizes[i], shuffledPrizes[j]] = [shuffledPrizes[j], shuffledPrizes[i]];
+        }
+        
+        // 分配給 1-13 號
+        this.prizes = {};
+        for (let i = 1; i <= 13; i++) {
+            this.prizes[i] = shuffledPrizes[i - 1];
+        }
     }
 
     setupEventListeners() {
@@ -118,6 +175,18 @@ class LotteryBox {
             e.stopPropagation();
             this.toggleMusic();
         });
+        
+        // 紅包彈窗關閉按鈕
+        document.getElementById('closeModal').addEventListener('click', () => this.closeBlessing());
+        
+        // 點擊遮罩層關閉彈窗
+        document.querySelector('.modal-overlay').addEventListener('click', () => this.closeBlessing());
+        
+        // 獎項彈窗關閉按鈕
+        document.getElementById('closePrizeModal').addEventListener('click', () => this.closePrize());
+        
+        // 點擊獎項遮罩層關閉
+        document.getElementById('prizeOverlay').addEventListener('click', () => this.closePrize());
     }
 
     // 音樂開關
@@ -165,7 +234,7 @@ class LotteryBox {
         
         for (let i = 0; i < rollTimes; i++) {
             AudioSystem.playDrum();
-            resultNumber.textContent = Math.floor(Math.random() * 30) + 1;
+            resultNumber.textContent = Math.floor(Math.random() * 13) + 1;
             await this.sleep(rollInterval);
         }
         
@@ -173,6 +242,7 @@ class LotteryBox {
         const randomIndex = Math.floor(Math.random() * this.numbers.length);
         const drawnNumber = this.numbers.splice(randomIndex, 1)[0];
         this.drawnNumbers.push(drawnNumber);
+        this.currentDrawnNumber = drawnNumber; // 儲存當前抽中的號碼
         
         resultNumber.classList.remove('rolling');
         resultNumber.textContent = drawnNumber;
@@ -195,6 +265,11 @@ class LotteryBox {
         if (this.numbers.length === 0) {
             button.textContent = '🎊 全部抽完！🎊';
         }
+        
+        // 延遲1秒後顯示吉祥話紅包
+        setTimeout(() => {
+            this.showBlessing();
+        }, 1000);
     }
 
     // 創建粒子特效
@@ -232,11 +307,61 @@ class LotteryBox {
         });
     }
 
+    // 顯示吉祥話紅包
+    showBlessing() {
+        const modal = document.getElementById('redEnvelopeModal');
+        const blessingText = document.getElementById('blessingText');
+        
+        // 如果吉祥話用完了，重新填充
+        if (this.availableBlessings.length === 0) {
+            this.availableBlessings = [...this.blessings];
+        }
+        
+        // 隨機選一個吉祥話（不重複）
+        const randomIndex = Math.floor(Math.random() * this.availableBlessings.length);
+        const blessing = this.availableBlessings.splice(randomIndex, 1)[0];
+        
+        blessingText.innerHTML = blessing.replace(/\n/g, '<br>');
+        modal.classList.add('show');
+    }
+    
+    // 關閉吉祥話彈窗
+    closeBlessing() {
+        const modal = document.getElementById('redEnvelopeModal');
+        modal.classList.remove('show');
+        
+        // 顯示獎項彈窗
+        if (this.currentDrawnNumber !== null) {
+            setTimeout(() => {
+                this.showPrize();
+            }, 300);
+        }
+    }
+    
+    // 顯示獎項彈窗
+    showPrize() {
+        const modal = document.getElementById('prizeModal');
+        const prizeNumber = document.getElementById('prizeNumber');
+        const prizeAward = document.getElementById('prizeAward');
+        
+        prizeNumber.textContent = this.currentDrawnNumber;
+        prizeAward.textContent = this.prizes[this.currentDrawnNumber];
+        
+        modal.classList.add('show');
+    }
+    
+    // 關閉獎項彈窗
+    closePrize() {
+        const modal = document.getElementById('prizeModal');
+        modal.classList.remove('show');
+    }
+    
     // 重置
     reset() {
         if (confirm('確定要重新開始嗎？')) {
             AudioSystem.playReset();
             this.init();
+            this.availableBlessings = [...this.blessings]; // 重置吉祥話庫
             document.getElementById('resultNumber').style.display = 'none';
             document.getElementById('drawButton').textContent = '🎊 開始抽獎 🎊';
             document.getElementById('drawButton').disabled = false;

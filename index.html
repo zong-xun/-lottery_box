@@ -38,7 +38,7 @@
                 <div class="info-section">
                     <div class="info-box">
                         <div class="info-label">剩餘號碼</div>
-                        <div id="remaining" class="info-value">30</div>
+                        <div id="remaining" class="info-value">13</div>
                     </div>
                     <div class="info-box">
                         <div class="info-label">已抽出</div>
@@ -56,6 +56,43 @@
 
         <!-- 重新開始 -->
         <button id="resetButton" class="reset-button">🔄 重新開始</button>
+    </div>
+
+    <!-- 紅包彈窗 -->
+    <div id="redEnvelopeModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="red-envelope">
+            <div class="envelope-top"></div>
+            <div class="envelope-body">
+                <div class="blessing-text" id="blessingText">恭喜發財</div>
+            </div>
+            <div class="envelope-flap"></div>
+            <div class="envelope-seal">福</div>
+            <button id="closeModal" class="confirm-button">確定</button>
+        </div>
+    </div>
+
+    <!-- 獎項彈窗 -->
+    <div id="prizeModal" class="modal">
+        <div class="modal-overlay" id="prizeOverlay"></div>
+        <div class="prize-card">
+            <div class="prize-header">
+                <div class="prize-sparkle">✨</div>
+                <div class="prize-title">恭喜中獎！</div>
+                <div class="prize-sparkle">✨</div>
+            </div>
+            <div class="prize-content">
+                <div class="prize-number-label">抽中號碼</div>
+                <div class="prize-number" id="prizeNumber">1</div>
+                <div class="prize-divider"></div>
+                <div class="prize-award-label">獎項</div>
+                <div class="prize-award" id="prizeAward">🏆 特等獎</div>
+            </div>
+            <div class="prize-footer">
+                <div class="prize-blessing">祝您馬年大吉！</div>
+            </div>
+            <button id="closePrizeModal" class="prize-confirm-button">確定</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
