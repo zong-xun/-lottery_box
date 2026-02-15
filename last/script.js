@@ -183,19 +183,19 @@ class LotteryBox {
 
         // ✅ 參賽者（自行改名單）
         this.participants = [
-            '大哥', 
-            '大嫂', 
-            '二哥', 
-            '二嫂',
-            '三哥',
-            '三嫂',
-            '四哥',
-            '四嫂',
-            '五哥',
-            '五嫂',
-            '大姊',
-            '姊夫',
-            '生惠'
+            '吳老大（阿茂仔）', 
+            '伶芝小姐', 
+            '吳老二（崁 ㄟ）', 
+            '美雲小姐',
+            '吳老三（黑鬼仔）',
+            '玉婷小姐',
+            '吳老？（要叫伍佰）',
+            '琇喻小姐',
+            '錦芳（阿芳）',
+            '靖淳小姐',
+            '韻秋（阿秋啊）',
+            '清水（阿水啊）',
+            '生惠（肉雞）'
         ];
         this.remainingParticipants = [];
         this.currentParticipant = null;
@@ -694,9 +694,9 @@ const introPages = [
     if (p.type === 'intro') {
       bodyEl.innerHTML = `
         <ul class="scroll-list">
-          <li>本龍來你家玩樂爽翻天</li>
+          <li>龍來你家玩樂爽翻天</li>
           <li>馬到吳門笑鬧喜連天</li>
-          <li>抽橫批…笑到變有錢</li>
+          <li>～祝大家中大獎啦～</li>
         </ul>
       `;
     } else if (p.type === 'prizes') {

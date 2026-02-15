@@ -1,3 +1,4 @@
+
 * {
     margin: 0;
     padding: 0;
@@ -140,6 +141,10 @@ body {
 
 /* 主容器 */
 .container {
+    min-height:100vh; 
+    display:flex; 
+    flex-direction:column; 
+    justify-content:center;
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
@@ -380,6 +385,9 @@ body {
     min-height: 200px;
     max-height: 200px;
     overflow: scroll;
+      &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .drawn-title {
@@ -1513,6 +1521,9 @@ body {
     overflow-x: hidden !important;
     padding-bottom: 24px;
     /* 最後一行不會貼底被遮 */
+      &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* footer 固定在底部，不被內容影響 */
@@ -1890,5 +1901,25 @@ body {
   }
   #introModal .scroll-title{
     font-size: clamp(20px, 6.5vw, 26px) !important;
+  }
+}
+
+/* ✅ 修正：捲動時上下白條（html 露白 + overscroll 回彈） */
+html {
+  height: 100%;
+  background: #8B0000; /* 跟你主色一致，避免露白 */
+}
+
+body {
+  min-height: 100%;
+  background-color: #8B0000; /* 當漸層沒覆蓋到時的底色 */
+  overscroll-behavior-y: none; /* Chrome/Android：避免回彈露底 */
+   /* overflow-y: hidden;  */
+}
+
+/* iOS Safari：避免「橡皮筋回彈」看到白邊（加強版） */
+@supports (-webkit-touch-callout: none) {
+  body {
+    -webkit-overflow-scrolling: touch;
   }
 }
