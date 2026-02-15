@@ -691,14 +691,18 @@ const introPages = [
     titleEl.textContent = p.title;
     subEl.innerHTML = p.sub;
 
-    if (p.type === 'intro') {
-      bodyEl.innerHTML = `
-        <ul class="scroll-list">
-          <li>龍來你家玩樂爽翻天</li>
-          <li>馬到吳門笑鬧喜連天</li>
-          <li>～祝大家中大獎啦～</li>
-        </ul>
-      `;
+        if (p.type === 'intro') {
+            bodyEl.innerHTML = `
+                <div class="intro-art">
+                    <div class="intro-title-line">— 龍來你家玩樂爽翻天 —</div>
+                    <div class="intro-lines">
+                        <p>馬年吉祥福氣來</p>
+                        <p>吳家開運旺整年</p>
+                        <p>摸彩抽出好彩頭</p>
+                        <p>金運財運全都來</p>
+                    </div>
+                </div>
+            `;
     } else if (p.type === 'prizes') {
       bodyEl.innerHTML = buildPrizeListHTML(window.lottery.prizePool);
     } else {
