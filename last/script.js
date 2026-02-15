@@ -169,10 +169,11 @@ class LotteryBox {
         this.drawnNumbers = [];
         this.isDrawing = false;
 
-        this.bgMusic = document.getElementById('bgMusic');
+        this.bgMusic = document.getElementById('bgMusic');        // 遊戲背景音樂
+        this.bgMusic1 = document.getElementById('bgMusic1');      // 導覽背景音樂
         this.musicControl = document.getElementById('musicControl');
-        this.isMusicPlaying = false;
-
+        this.isMusicPlaying = false;      // 遊戲音樂狀態
+        this.isMusicPlaying1 = false;     // 導覽音樂狀態
         this.musicNormalVolume = 0.8;   // 平常音量
         this.musicDrawVolume = 0.25;    // 抽獎時音量
         this.musicFadeMs = 450;         // 淡入淡出時間(ms)
@@ -333,12 +334,11 @@ class LotteryBox {
             this.musicControl.classList.add('muted');
             this.isMusicPlaying = false;
         } else {
-            this.bgMusic.play().catch(() => { });
+            this.bgMusic.play().catch(() => {});
             this.musicControl.classList.remove('muted');
             this.isMusicPlaying = true;
         }
     }
-
     // ✅ 平滑調整背景音樂音量
     fadeMusicVolume(target, durationMs = 400) {
     if (!this.bgMusic) return;
@@ -719,24 +719,23 @@ const introPages = [
     renderDots();
   };
 
-  const autoPlayMusic1 = () => {
-        this.bgMusic.play().then(() => {
-            this.isMusicPlaying = true;
-            this.musicControl.classList.remove('muted');
-        }).catch(() => {
-            this.musicControl.classList.add('muted');
-            document.addEventListener('click', () => {
-                if (!this.isMusicPlaying) {
-                    this.bgMusic.volume = this.musicNormalVolume; // ✅ 新增
-                    this.bgMusic.play().then(() => {
-                        this.isMusicPlaying = true;
-                        this.musicControl.classList.remove('muted');
-                    }).catch(() => { });
-                }
-            }, { once: true });
-        });
-    }
+  // 導覽音樂控制
+  const playIntroMusic = () => {
+    const lottery = window.lottery;
+    lottery.bgMusic1.volume = lottery.musicNormalVolume;
+    lottery.bgMusic1.play().catch(() => {
+      // 瀏覽器不允許自動播放，需要用戶交互
+    });
+    lottery.isMusicPlaying1 = true;
+  };
 
+  const stopIntroMusic = () => {
+    const lottery = window.lottery;
+    lottery.bgMusic1.pause();
+    lottery.isMusicPlaying1 = false;
+  };
+
+    
   prevBtn.addEventListener('click', () => { idx = Math.max(0, idx - 1); render(); });
   nextBtn.addEventListener('click', () => { idx = Math.min(introPages.length - 1, idx + 1); render(); });
 
@@ -744,18 +743,28 @@ const introPages = [
   openBtn.addEventListener('click', () => {
     modal.classList.remove('intro-closed');
     modal.classList.add('intro-open');
-    autoPlayMusic1();
-    // window.lottery.autoPlayMusic(); 
+    playIntroMusic();  // 播放導覽音樂
     render();
   });
 
   // ✅ 最後頁的「活動開始」
   startBtn.addEventListener('click', () => {
+    // 停止導覽音樂
+    stopIntroMusic();
+    
+    // 播放遊戲背景音樂
+    const lottery = window.lottery;
+    lottery.bgMusic.volume = lottery.musicNormalVolume;
+    lottery.bgMusic.play().catch(() => {
+      // 瀏覽器不允許自動播放
+    });
+    lottery.isMusicPlaying = true;
+    
     modal.classList.remove('show');
     modal.classList.remove('intro-open');
     modal.classList.add('intro-closed'); // 下次 reset 還能再用卷起來
 
-    window.lottery.startGameFromIntro(); // 跳本輪誰抽
+    lottery.startGameFromIntro(); // 跳本輪誰抽
   });
 
   // 初始狀態：卷起來，不先 render（避免內容先閃一下）
