@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>🐴 吳家馬年摸彩箱 🧧</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* ─── 各畫面 ─── */
+    .screen { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 440px; gap: 22px; }
+    .screen.active { display: flex; }
+
+    /* 等待開始 */
+    .wait-icon { font-size: 72px; animation: spinSlow 6s linear infinite; }
+    @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+    /* 選名字卡片 */
+    .name-card {
+      background: rgba(255,255,255,0.95);
+      border: 4px solid #FFD700;
+      border-radius: 25px;
+      padding: 24px 18px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    }
+    .name-card-title {
+      font-size: 20px; font-weight: bold;
+      color: #8B0000; text-align: center;
+      margin-bottom: 16px; letter-spacing: 2px;
+    }
+    .name-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .name-btn {
+      background: linear-gradient(135deg, #DC143C, #8B0000);
+      color: #FFD700;
+      border: 3px solid #FFD700;
+      border-radius: 14px;
+      padding: 14px 6px;
+      font-size: 14px; font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s;
+      line-height: 1.4;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+    }
+    .name-btn:active { transform: scale(0.93); }
+
+    /* 等待中卡片 */
+    .info-card {
+      background: rgba(255,255,255,0.95);
+      border: 4px solid #FFD700;
+      border-radius: 25px;
+      padding: 26px 22px;
+      width: 100%; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    }
+    .info-card .ic-label { font-size: 17px; color: #8B0000; font-weight: bold; letter-spacing: 2px; }
+    .info-card .ic-name  { font-size: 30px; color: #8B0000; font-weight: 900; margin: 6px 0 14px; }
+    .info-card .ic-divider {
+      width: 80%; height: 3px; margin: 0 auto 14px;
+      background: linear-gradient(to right, transparent, #FFD700, transparent);
+    }
+    .info-card .ic-now-label { font-size: 15px; color: #8B0000; opacity: 0.7; }
+    .info-card .ic-now-name  { font-size: 24px; color: #DC143C; font-weight: bold; margin-top: 4px; }
+    .dots { display: flex; gap: 6px; justify-content: center; margin-top: 14px; }
+    .dot  { width: 10px; height: 10px; background: #DC143C; border-radius: 50%; animation: dotBounce 1.2s infinite; }
+    .dot:nth-child(2) { animation-delay: .2s; }
+    .dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes dotBounce {
+      0%,100% { transform: translateY(0);  opacity: .4; }
+      50%      { transform: translateY(-8px); opacity: 1; }
+    }
+
+    /* 輪到你 */
+    .your-turn-title {
+      font-size: 40px; font-weight: 900; color: #FFD700;
+      text-shadow: 3px 3px 0 #660000;
+      animation: glow 1.5s ease-in-out infinite;
+    }
+    @keyframes glow {
+      0%,100% { text-shadow: 3px 3px 0 #660000, 0 0 20px rgba(255,215,0,.3); }
+      50%      { text-shadow: 3px 3px 0 #660000, 0 0 40px rgba(255,215,0,.9); }
+    }
+    .draw-big-btn {
+      width: 220px; height: 220px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #FF4500, #8B0000);
+      color: #FFD700; font-size: 60px; font-weight: 900;
+      border: 8px solid #FFD700; cursor: pointer;
+      box-shadow: 0 12px 0 #660000, 0 16px 50px rgba(0,0,0,.6);
+      transition: all .12s;
+      animation: btnPulse 2s ease-in-out infinite;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+    }
+    @keyframes btnPulse {
+      0%,100% { box-shadow: 0 12px 0 #660000, 0 16px 50px rgba(0,0,0,.6), 0 0 40px rgba(255,100,0,.3); }
+      50%      { box-shadow: 0 12px 0 #660000, 0 16px 60px rgba(0,0,0,.6), 0 0 80px rgba(255,150,0,.7); }
+    }
+    .draw-big-btn:active { transform: translateY(8px) scale(.93); box-shadow: 0 4px 0 #660000; animation: none; }
+    .draw-big-btn:disabled { opacity: .5; animation: none; cursor: not-allowed; }
+
+    /* 得獎文字 */
+    .prize-got {
+      font-size: 34px; font-weight: 900;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* 重選名字 */
+    .relo-btn {
+      background: transparent;
+      color: rgba(255,215,0,.55);
+      border: 1px solid rgba(255,215,0,.35);
+      border-radius: 20px;
+      padding: 6px 18px; font-size: 13px;
+      cursor: pointer; margin-top: -8px;
+      font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="decoration lantern lantern-left" style="width:40px;height:60px;top:10px;left:10px;"></div>
+  <div class="decoration lantern lantern-right" style="width:40px;height:60px;top:10px;right:10px;"></div>
+
+  <!-- ① 等待主持開始 -->
+  <div class="screen" id="lobbyWaitScreen">
+    <div class="title" style="font-size:30px;text-align:center;">🐴 吳家馬年摸彩箱 🧧</div>
+    <div class="wait-icon">⏳</div>
+    <div class="subtitle" style="text-align:center;font-size:22px;">等待主持人<br>開始抽獎...</div>
+  </div>
+
+  <!-- ② 選名字 -->
+  <div class="screen" id="nameScreen">
+    <div class="title" style="font-size:28px;text-align:center;">🐴 吳家馬年摸彩箱 🧧</div>
+    <div class="name-card">
+      <div class="name-card-title">請選擇你的名字</div>
+      <div class="name-grid" id="nameGrid"></div>
+    </div>
+  </div>
+
+  <!-- ③ 等待中 -->
+  <div class="screen" id="waitScreen">
+    <div class="title" style="font-size:28px;text-align:center;">🐴 吳家馬年摸彩箱 🧧</div>
+    <div class="info-card">
+      <div class="ic-label">你是</div>
+      <div class="ic-name" id="myNameDisplay">—</div>
+      <div class="ic-divider"></div>
+      <div class="ic-now-label">現在輪到</div>
+      <div class="ic-now-name" id="nowPlayerDisplay">—</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+    <button class="relo-btn" id="changeNameBtn">選錯了？重選名字</button>
+  </div>
+
+  <!-- ④ 輪到你！ -->
+  <div class="screen" id="yourTurnScreen">
+    <div class="your-turn-title">✨ 輪到你了！</div>
+    <button class="draw-big-btn" id="drawBtn">抽！</button>
+  </div>
+
+  <!-- ⑤ 開獎中 -->
+  <div class="screen" id="drawingScreen">
+    <div class="title" style="font-size:28px;text-align:center;">🐴 吳家馬年摸彩箱 🧧</div>
+    <div class="info-card">
+      <div style="font-size:30px;color:#8B0000;font-weight:900;margin-bottom:12px;">🎬 開獎中...</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <!-- ⑥ 已抽完，等其他人 -->
+  <div class="screen" id="drawnScreen">
+    <div class="title" style="font-size:28px;text-align:center;">🐴 吳家馬年摸彩箱 🧧</div>
+    <div class="info-card">
+      <div class="ic-label">得獎者</div>
+      <div class="ic-name" id="drawnNameDisplay">—</div>
+      <div class="ic-divider"></div>
+      <div class="ic-now-label">🎉 恭喜獲得</div>
+      <div class="prize-got" id="drawnPrizeDisplay">—</div>
+    </div>
+    <div class="info-card" style="font-size:15px;color:rgba(139,0,0,.7);padding:14px;">
+      等待其他人抽獎中...
+      <div class="dots" style="margin-top:8px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+
+  <!-- ⑦ 全部結束 -->
+  <div class="screen" id="endScreen">
+    <div class="title" style="font-size:28px;text-align:center;">🐴 吳家馬年摸彩箱 🧧</div>
+    <div class="prize-card">
+      <div class="prize-header">
+        <div class="prize-sparkle">🎊</div>
+        <div class="prize-title">抽獎結束！</div>
+        <div class="prize-sparkle">🎊</div>
+      </div>
+      <div class="prize-content">
+        <div class="prize-award-label">你的獎項</div>
+        <div class="prize-award" id="finalPrizeDisplay">—</div>
+      </div>
+      <div class="prize-footer">
+        <div class="prize-blessing">馬年大吉・恭喜發財</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ─── Firebase 初始化 ───
+const firebaseConfig = {
+    apiKey: "AIzaSyA8SZpzjbCCaq45MhBej1-I_qkY-_QiS-g",
+    authDomain: "lottery-box-70d2f.firebaseapp.com",
+    databaseURL: "https://lottery-box-70d2f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "lottery-box-70d2f",
+    storageBucket: "lottery-box-70d2f.firebasestorage.app",
+    messagingSenderId: "853905847089",
+    appId: "1:853905847089:web:034d76f6e3794dbf84b610"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const gameRef = db.ref('game');
+
+// ─── 名單 ───
+const PARTICIPANTS = [
+    '吳老大（阿茂仔）','伶芝小姐',
+    '吳老二（崁 ㄟ）','美雲小姐',
+    '吳老三（黑鬼仔）','玉婷小姐',
+    '吳老？（要叫伍佰）','琇喻小姐',
+    '錦芳（阿芳）','靖淳小姐',
+    '韻秋（阿秋啊）','清水（阿水啊）','生惠（肉雞）'
+];
+
+// ─── 裝置 ID ───
+let deviceId = localStorage.getItem('lotteryDeviceId');
+if (!deviceId) {
+    deviceId = 'dev_' + Math.random().toString(36).slice(2,10);
+    localStorage.setItem('lotteryDeviceId', deviceId);
+}
+let myName = localStorage.getItem('lotteryMyName') || '';
+
+// ─── 建立名字按鈕 ───
+const nameGrid = document.getElementById('nameGrid');
+PARTICIPANTS.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'name-btn';
+    btn.textContent = name;
+    btn.addEventListener('click', () => selectName(name));
+    nameGrid.appendChild(btn);
+});
+
+function selectName(name) {
+    myName = name;
+    localStorage.setItem('lotteryMyName', name);
+    db.ref('players/' + deviceId).set({ name, joinedAt: Date.now() });
+    if (latestGame) handleGameState(latestGame);
+}
+
+document.getElementById('changeNameBtn').addEventListener('click', () => {
+    myName = '';
+    localStorage.removeItem('lotteryMyName');
+    db.ref('players/' + deviceId).remove();
+    if (latestGame) handleGameState(latestGame);
+});
+
+// ─── 抽獎按鈕 ───
+const drawBtn = document.getElementById('drawBtn');
+drawBtn.addEventListener('click', () => {
+    if (!myName || !latestGame) return;
+    drawBtn.disabled = true;
+    if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+    gameRef.update({ phase: 'drawing' });
+});
+
+// ─── 監聽 Firebase ───
+let latestGame = null;
+gameRef.on('value', function(snap) {
+    latestGame = snap.val();
+    handleGameState(latestGame);
+});
+
+function handleGameState(game) {
+    if (!game) { showScreen('lobbyWaitScreen'); return; }
+
+    var phase = game.phase;
+    var currentPlayer = game.currentPlayer;
+    var results = game.results || {};
+    var myResult = results[myName];
+
+    if (!myName) {
+        showScreen((phase === 'waiting' || phase === 'drawing') ? 'nameScreen' : 'lobbyWaitScreen');
+        return;
+    }
+
+    // 保持線上
+    db.ref('players/' + deviceId).set({ name: myName, joinedAt: Date.now() });
+    document.getElementById('myNameDisplay').textContent  = myName;
+    document.getElementById('nowPlayerDisplay').textContent = currentPlayer || '—';
+
+    if (phase === 'done') {
+        var prizes = game.prizes || {};
+        document.getElementById('finalPrizeDisplay').textContent = prizes[myName] || '？';
+        showScreen('endScreen');
+        return;
+    }
+
+    var isMyTurn = (currentPlayer === myName);
+
+    if (phase === 'waiting') {
+        if (isMyTurn) {
+            drawBtn.disabled = false;
+            showScreen('yourTurnScreen');
+            if (navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
+        } else if (myResult) {
+            document.getElementById('drawnNameDisplay').textContent  = myName;
+            document.getElementById('drawnPrizeDisplay').textContent = myResult;
+            showScreen('drawnScreen');
+        } else {
+            showScreen('waitScreen');
+        }
+        return;
+    }
+
+    if (phase === 'drawing') {
+        if (isMyTurn) {
+            showScreen('drawingScreen');
+        } else if (myResult) {
+            document.getElementById('drawnNameDisplay').textContent  = myName;
+            document.getElementById('drawnPrizeDisplay').textContent = myResult;
+            showScreen('drawnScreen');
+        } else {
+            showScreen('waitScreen');
+        }
+    }
+}
+
+var ALL_SCREENS = ['lobbyWaitScreen','nameScreen','waitScreen','yourTurnScreen','drawingScreen','drawnScreen','endScreen'];
+function showScreen(id) {
+    ALL_SCREENS.forEach(function(s) {
+        document.getElementById(s).classList.toggle('active', s === id);
+    });
+}
+
+window.addEventListener('beforeunload', function() {
+    db.ref('players/' + deviceId).remove();
+});
+</script>
+</body>
+</html>
