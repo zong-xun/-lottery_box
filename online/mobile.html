@@ -138,6 +138,21 @@
   <div class="decoration lantern lantern-left" style="width:40px;height:60px;top:10px;left:10px;"></div>
   <div class="decoration lantern lantern-right" style="width:40px;height:60px;top:10px;right:10px;"></div>
 
+  <!-- 彈窗確定覆蓋層（當電腦顯示彈窗時，手機跳出來讓本人按確定） -->
+  <div id="confirmOverlay" style="
+    display:none; position:fixed; inset:0; z-index:999;
+    background:rgba(0,0,0,0.82);
+    flex-direction:column; align-items:center; justify-content:center; gap:28px;
+  ">
+    <div id="confirmMsg" style="
+      color:#FFD700; font-size:26px; font-weight:900;
+      text-align:center; line-height:1.7;
+      text-shadow:2px 2px 0 #660000;
+      padding:0 24px;
+    "></div>
+    <button id="confirmBtn" class="draw-big-btn" style="width:170px;height:170px;font-size:40px;">確定</button>
+  </div>
+
   <!-- ① 等待主持開始 -->
   <div class="screen" id="lobbyWaitScreen">
     <div class="title" style="font-size:30px;text-align:center;">🐴 吳家馬年摸彩箱 🧧</div>
@@ -309,6 +324,9 @@ function handleGameState(game) {
     document.getElementById('myNameDisplay').textContent  = myName;
     document.getElementById('nowPlayerDisplay').textContent = currentPlayer || '—';
 
+    // 每次更新都檢查是否要顯示確定按鈕
+    updateConfirmOverlay(game);
+
     if (phase === 'done') {
         var prizes = game.prizes || {};
         document.getElementById('finalPrizeDisplay').textContent = prizes[myName] || '？';
@@ -351,6 +369,49 @@ function showScreen(id) {
     ALL_SCREENS.forEach(function(s) {
         document.getElementById(s).classList.toggle('active', s === id);
     });
+}
+
+// ─── 彈窗確定覆蓋層邏輯 ───
+var confirmOverlay = document.getElementById('confirmOverlay');
+var confirmMsg     = document.getElementById('confirmMsg');
+var confirmBtn     = document.getElementById('confirmBtn');
+var pendingModal   = null;
+
+confirmBtn.addEventListener('click', function() {
+    if (!pendingModal) return;
+    gameRef.update({ modalConfirm: pendingModal });
+    hideConfirm();
+    if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
+});
+
+function showConfirm(msg, type) {
+    pendingModal = type;
+    confirmMsg.textContent = msg;
+    confirmOverlay.style.display = 'flex';
+}
+
+function hideConfirm() {
+    pendingModal = null;
+    confirmOverlay.style.display = 'none';
+}
+
+// handleGameState 裡呼叫，根據 modal 欄位決定是否顯示確定按鈕
+function updateConfirmOverlay(game) {
+    if (!game || !myName) { hideConfirm(); return; }
+    var modal = game.modal;
+    var isMyTurn = (game.currentPlayer === myName);
+
+    if (modal === 'turn' && isMyTurn) {
+        showConfirm('輪到你了！\n請按確定開始抽獎', 'turn');
+    } else if (modal === 'blessing' && isMyTurn) {
+        showConfirm('🧧 吉祥話\n請按確定查看獎項', 'blessing');
+    } else if (modal === 'prize' && isMyTurn) {
+        showConfirm('🎁 查看完了嗎？\n請按確定繼續', 'prize');
+    } else if (modal === 'complete') {
+        showConfirm('🎊 活動圓滿結束！\n請按確定', 'complete');
+    } else {
+        hideConfirm();
+    }
 }
 
 window.addEventListener('beforeunload', function() {

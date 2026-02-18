@@ -877,11 +877,14 @@ const introPages = [
     });
 
     // 手機端按下「抽！」→ Firebase phase 變 drawing → 這裡觸發 draw()
+    // 手機按「確定」→ Firebase modalConfirm 變化 → 電腦關閉對應彈窗
     let lastPhase = '';
+    let lastModalConfirm = null;
+
     gameRef.on('value', snap => {
         const game = snap.val();
         if (!game) return;
-        const { phase, currentPlayer } = game;
+        const { phase, currentPlayer, modalConfirm } = game;
 
         // 手機說：抽！→ 這台電腦負責執行 draw()
         if (phase === 'drawing' && lastPhase === 'waiting') {
@@ -892,39 +895,67 @@ const introPages = [
         } else {
             lastPhase = phase || '';
         }
+
+        // 手機按確定 → 關閉對應彈窗
+        if (modalConfirm && modalConfirm !== lastModalConfirm) {
+            lastModalConfirm = modalConfirm;
+            gameRef.update({ modalConfirm: null, modal: null });
+            if      (modalConfirm === 'turn')     window.lottery && window.lottery.closeTurnModal();
+            else if (modalConfirm === 'blessing') window.lottery && window.lottery.closeBlessing();
+            else if (modalConfirm === 'prize')    window.lottery && window.lottery.closePrize();
+            else if (modalConfirm === 'complete') window.lottery && window.lottery.closeComplete();
+        } else if (!modalConfirm) {
+            lastModalConfirm = null;
+        }
     });
 
     // 把「目前輪到誰」同步到 Firebase（讓手機端顯示）
     const origPickNext = LotteryBox.prototype.pickNextParticipant;
     LotteryBox.prototype.pickNextParticipant = function(isFirst) {
         origPickNext.call(this, isFirst);
-        // 抽到新的人後同步
         if (this.currentParticipant) {
-            gameRef.update({
-                phase: 'waiting',
-                currentPlayer: this.currentParticipant
-            });
+            gameRef.update({ phase: 'waiting', currentPlayer: this.currentParticipant, modal: null });
         }
+    };
+
+    // 輪到誰彈窗 → 同步 modal 狀態
+    const origShowTurnModal = LotteryBox.prototype.showTurnModal;
+    LotteryBox.prototype.showTurnModal = function(isFirst) {
+        origShowTurnModal.call(this, isFirst);
+        gameRef.update({ modal: 'turn' });
+    };
+
+    // 吉祥話彈窗 → 同步 modal 狀態
+    const origShowBlessing = LotteryBox.prototype.showBlessing;
+    LotteryBox.prototype.showBlessing = function() {
+        origShowBlessing.call(this);
+        gameRef.update({ modal: 'blessing' });
+    };
+
+    // 獎項彈窗 → 同步 modal 狀態
+    const origShowPrize = LotteryBox.prototype.showPrize;
+    LotteryBox.prototype.showPrize = function() {
+        origShowPrize.call(this);
+        gameRef.update({ modal: 'prize' });
     };
 
     // draw() 結束後同步結果（prize）
     const origClosePrize = LotteryBox.prototype.closePrize;
     LotteryBox.prototype.closePrize = function() {
         origClosePrize.call(this);
-        // 同步已抽結果
         const results = {};
         this.drawnNumbers.forEach(n => {
             const winner = this.winners[n];
             if (winner) results[winner] = this.prizes[n];
         });
-        gameRef.update({ results, phase: 'waiting' });
+        gameRef.update({ results, phase: 'waiting', modal: null });
     };
 
     // 遊戲結束後同步
     const origShowComplete = LotteryBox.prototype.showComplete;
     LotteryBox.prototype.showComplete = function() {
         origShowComplete.call(this);
-        gameRef.update({ phase: 'done' });
+        gameRef.update({ phase: 'done', modal: 'complete' });
     };
 
     // 重設時清掉 Firebase
@@ -933,12 +964,13 @@ const introPages = [
         origReset.call(this);
         gameRef.remove();
         lastPhase = '';
+        lastModalConfirm = null;
     };
 
     // 活動開始 → 寫入初始 phase
     const origStart = LotteryBox.prototype.startGameFromIntro;
     LotteryBox.prototype.startGameFromIntro = function() {
         origStart.call(this);
-        gameRef.set({ phase: 'waiting', currentPlayer: this.currentParticipant || '', results: {} });
+        gameRef.set({ phase: 'waiting', currentPlayer: this.currentParticipant || '', results: {}, modal: null });
     };
 })();
