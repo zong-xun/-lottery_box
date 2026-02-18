@@ -780,7 +780,24 @@ const introPages = [
           <li>每抽完一個號碼 → 自動換下一位</li>
           <li>右側「已抽出號碼」可點查看：誰中 + 中什麼獎</li>
         </ul>
+        <div style="display:flex;align-items:center;gap:20px;margin-top:20px;
+          background:rgba(0,0,0,0.25);border:2px solid rgba(255,215,0,0.4);
+          border-radius:16px;padding:16px 20px;">
+          <img id="qrImg" src="" width="120" height="120" alt="QR Code"
+            style="border-radius:8px;background:#fff;padding:4px;flex-shrink:0;">
+          <div style="color:#FFD700;font-size:17px;line-height:1.9;">
+            <strong style="font-size:20px;display:block;margin-bottom:4px;">📱 親戚請揃描加入</strong>
+            手機揃描 QR Code<br>選好名字等候抽獎<br>
+            <span id="onlineBar" style="font-size:16px;opacity:0.85;">線上人數：<span id="onlineCount">0</span> 人</span>
+          </div>
+        </div>
       `;
+      // 每次渲染 rules 頁就重新設置 QR Code
+      const qrImg = document.getElementById('qrImg');
+      if (qrImg && !qrImg.src) {
+        const MOBILE_URL = 'https://zong-xun.github.io/-lottery_box/online/mobile.html';
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(MOBILE_URL)}&color=8B0000&bgcolor=FFFFFF`;
+      }
     }
 
     prevBtn.disabled = idx === 0;
@@ -862,14 +879,7 @@ const introPages = [
     const gameRef = db.ref('game');
     const playersRef = db.ref('players');
 
-    // QR Code（手機操作頁網址）
-    const MOBILE_URL = 'https://zong-xun.github.io/-lottery_box/online/mobile.html';
-    const qrImg = document.getElementById('qrImg');
-    if (qrImg) {
-        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(MOBILE_URL)}&color=8B0000&bgcolor=FFFFFF`;
-    }
-
-    // 線上人數
+    // 線上人數（qrImg 已在開場捲軸 rules 頁 render 時設定）
     playersRef.on('value', snap => {
         const count = snap.val() ? Object.keys(snap.val()).length : 0;
         const el = document.getElementById('onlineCount');

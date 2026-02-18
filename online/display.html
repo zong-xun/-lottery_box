@@ -8,15 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
   <style>
-    .qr-lobby {
-      display: flex; align-items: center; gap: 20px;
-      background: rgba(0,0,0,0.3); border: 2px solid rgba(255,215,0,0.35);
-      border-radius: 16px; padding: 16px 24px; margin-top: 10px;
-    }
-    .qr-lobby img { border-radius: 8px; background:#fff; padding:4px; }
-    .qr-lobby-text { font-size:18px; line-height:2; color:#FFD700; }
-    .qr-lobby-text strong { font-size:22px; display:block; }
-    #onlineBar { font-size:22px; color:rgba(255,215,0,0.8); margin-top:6px; }
+    #onlineBar { font-size:20px; color:rgba(255,215,0,0.8); }
   </style>
 </head>
 <body>
@@ -38,14 +30,7 @@
     <div class="header">
       <div class="title">🐴 吳家馬年摸彩箱 🧧</div>
       <div class="subtitle">金馬迎春，福滿乾坤</div>
-      <div class="qr-lobby">
-        <img id="qrImg" src="" width="130" height="130" alt="QR Code">
-        <div class="qr-lobby-text">
-          <strong>📱 親戚掃描加入</strong>
-          手機選好名字後即可等候抽獎<br>
-          <span id="onlineBar">線上人數：<span id="onlineCount">0</span> 人</span>
-        </div>
-      </div>
+
     </div>
 
     <!-- 主要內容區 -->
