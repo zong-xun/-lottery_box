@@ -720,8 +720,13 @@ const introPages = [
     },
     {
         title: '遊戲規則',
-        sub: '準備開始開抽囉！',
+        sub: '游戲流程說明',
         type: 'rules'
+    },
+    {
+        title: '親戚入場掃碼',
+        sub: '掃描下方 QR Code 加入抽獎！',
+        type: 'qr'
     }
 ];
 
@@ -773,31 +778,29 @@ const introPages = [
             `;
     } else if (p.type === 'prizes') {
       bodyEl.innerHTML = buildPrizeListHTML(window.lottery.prizePool);
-    } else {
+    } else if (p.type === 'rules') {
       bodyEl.innerHTML = `
         <ul class="scroll-list">
           <li>點「活動開始」後，先抽出第一位抽獎者</li>
-          <li>每抽完一個號碼 → 自動換下一位</li>
-          <li>右側「已抽出號碼」可點查看：誰中 + 中什麼獎</li>
+          <li>輪到誰 → 那个人的手機會跳出大按鈕</li>
+          <li>手機按「抽！」開始訓抽，電腦畫面播出動畫</li>
+          <li>弹窗確定也可用手機按</li>
         </ul>
-        <div style="display:flex;align-items:center;gap:20px;margin-top:20px;
-          background:rgba(0,0,0,0.25);border:2px solid rgba(255,215,0,0.4);
-          border-radius:16px;padding:16px 20px;">
-          <img id="qrImg" src="" width="120" height="120" alt="QR Code"
-            style="border-radius:8px;background:#fff;padding:4px;flex-shrink:0;">
-          <div style="color:#FFD700;font-size:17px;line-height:1.9;">
-            <strong style="font-size:20px;display:block;margin-bottom:4px;">📱 親戚請揃描加入</strong>
-            手機揃描 QR Code<br>選好名字等候抽獎<br>
-            <span id="onlineBar" style="font-size:16px;opacity:0.85;">線上人數：<span id="onlineCount">0</span> 人</span>
+      `;
+    } else {
+      // type === 'qr'
+      const MOBILE_URL = 'https://zong-xun.github.io/-lottery_box/online/mobile.html';
+      bodyEl.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:20px;padding:10px 0;">
+          <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(MOBILE_URL)}&color=8B0000&bgcolor=FFFFFF"
+            width="200" height="200" alt="QR Code"
+            style="border-radius:12px;background:#fff;padding:8px;box-shadow:0 6px 20px rgba(0,0,0,0.4);">
+          <div style="color:#FFD700;font-size:18px;text-align:center;line-height:2;">
+            📱 手機掃完選好名字後等候抽獎<br>
+            <span id="onlineBar" style="font-size:20px;font-weight:bold;">線上人數：<span id="onlineCount">0</span> 人</span>
           </div>
         </div>
       `;
-      // 每次渲染 rules 頁就重新設置 QR Code
-      const qrImg = document.getElementById('qrImg');
-      if (qrImg && !qrImg.src) {
-        const MOBILE_URL = 'https://zong-xun.github.io/-lottery_box/online/mobile.html';
-        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(MOBILE_URL)}&color=8B0000&bgcolor=FFFFFF`;
-      }
     }
 
     prevBtn.disabled = idx === 0;
